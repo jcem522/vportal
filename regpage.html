@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Portal - Select Type</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fb;
+            color: #242934;
+            line-height: 1.5;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .header {
+            height: 64px;
+            width: 100%;
+            background-color: #ffffff;
+            border-bottom: 1px solid #e1e4e8;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            position: fixed;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            width: 120px;
+            height: 24px;
+            background-color: #4a6bff;
+            border-radius: 4px;
+        }
+        
+        .site-title {
+            margin-left: 15px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .progress-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .progress-bar {
+            width: 600px;
+            position: relative;
+        }
+        
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background-color: #e1e4e8;
+            border-radius: 3px;
+        }
+        
+        .progress-fill {
+            width: 20%;
+            height: 6px;
+            background-color: #4a6bff;
+            border-radius: 3px;
+            position: absolute;
+            top: 0;
+        }
+        
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 50px;
+        }
+        
+        .step-circle {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .step.active .step-circle {
+            background-color: #4a6bff;
+        }
+        
+        .step.pending .step-circle {
+            background-color: #e1e4e8;
+            border: 2px solid #4a6bff;
+        }
+        
+        .step.inactive .step-circle {
+            background-color: #e1e4e8;
+        }
+        
+        .step-label {
+            font-size: 12px;
+            color: #72787e;
+        }
+        
+        .step.active .step-label {
+            color: #4a6bff;
+        }
+        
+        .main-container {
+            display: flex;
+            margin-top: 64px;
+            height: calc(100vh - 64px);
+        }
+        
+        .sidebar {
+            width: 240px;
+            background-color: #ffffff;
+            border-right: 1px solid #e1e4e8;
+            padding: 30px 20px;
+        }
+        
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-menu {
+            list-style-type: none;
+        }
+        
+        .sidebar-menu-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .menu-circle {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .active .menu-circle {
+            background-color: #4a6bff;
+        }
+        
+        .inactive .menu-circle {
+            background-color: #e1e4e8;
+        }
+        
+        .menu-label {
+            font-size: 14px;
+        }
+        
+        .active .menu-label {
+            color: #4a6bff;
+        }
+        
+        .inactive .menu-label {
+            color: #72787e;
+        }
+        
+        .help-button {
+            margin-top: auto;
+            padding: 10px;
+            background-color: #f1f3f5;
+            text-align: center;
+            border-radius: 4px;
+            color: #4a6bff;
+            cursor: pointer;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 40px 50px;
+            overflow-y: auto;
+        }
+        
+        .content-header {
+            margin-bottom: 30px;
+        }
+        
+        .content-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .content-description {
+            font-size: 14px;
+            color: #72787e;
+        }
+        
+        .vendor-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 1200px) {
+            .vendor-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .vendor-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .vendor-card {
+            background-color: #ffffff;
+            border: 2px solid #e1e4e8;
+            border-radius: 8px;
+            padding: 20px;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .vendor-card-selected {
+            border-color: #4a6bff;
+        }
+        
+        .card-stripe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            border-radius: 2px 2px 0 0;
+        }
+        
+        .card-type1 .card-stripe {
+            background-color: #4a6bff;
+        }
+        
+        .card-type2 .card-stripe {
+            background-color: #34c759;
+        }
+        
+        .card-type3 .card-stripe {
+            background-color: #ff9500;
+        }
+        
+        .card-type4 .card-stripe {
+            background-color: #ac8ee3;
+        }
+        
+        .card-type5 .card-stripe {
+            background-color: #5ac8fa;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+        }
+        
+        .card-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #f1f3f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        
+        .card-type1 .card-circle {
+            color: #4a6bff;
+        }
+        
+        .card-type2 .card-circle {
+            color: #34c759;
+        }
+        
+        .card-type3 .card-circle {
+            color: #ff9500;
+        }
+        
+        .card-type4 .card-circle {
+            color: #ac8ee3;
+        }
+        
+        .card-type5 .card-circle {
+            color: #5ac8fa;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .card-description {
+            font-size: 14px;
+            color: #72787e;
+            margin-bottom: 15px;
+        }
+        
+        .card-features {
+            list-style-type: none;
+        }
+        
+        .card-feature {
+            font-size: 14px;
+            color: #72787e;
+            margin-bottom: 5px;
+        }
+        
+        .card-feature::before {
+            content: "•";
+            margin-right: 5px;
+        }
+        
+        .footer-note {
+            font-size: 14px;
+            color: #72787e;
+            margin: 20px 0 30px;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 30px;
+        }
+        
+        .button {
+            padding: 10px 30px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+            min-width: 120px;
+        }
+        
+        .button-secondary {
+            background-color: #ffffff;
+            border: 1px solid #e1e4e8;
+            color: #72787e;
+        }
+        
+        .button-primary {
+            background-color: #4a6bff;
+            color: #ffffff;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="logo"></div>
+            <div class="site-title">Vendor Portal</div>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-track"></div>
+                    <div class="progress-fill"></div>
+                    <div class="progress-steps">
+                        <div class="step active">
+                            <div class="step-circle"></div>
+                            <div class="step-label">Type</div>
+                        </div>
+                        <div class="step pending">
+                            <div class="step-circle"></div>
+                            <div class="step-label">Details</div>
+                        </div>
+                        <div class="step inactive">
+                            <div class="step-circle"></div>
+                            <div class="step-label">Contacts</div>
+                        </div>
+                        <div class="step inactive">
+                            <div class="step-circle"></div>
+                            <div class="step-label">Services</div>
+                        </div>
+                        <div class="step inactive">
+                            <div class="step-circle"></div>
+                            <div class="step-label">Banking</div>
+                        </div>
+                        <div class="step inactive">
+                            <div class="step-circle"></div>
+                            <div class="step-label">Submit</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-container">
+            <aside class="sidebar">
+                <h2 class="sidebar-title">Registration</h2>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-menu-item active">
+                        <div class="menu-circle"></div>
+                        <div class="menu-label">1. Vendor Type</div>
+                    </li>
+                    <li class="sidebar-menu-item inactive">
+                        <div class="menu-circle"></div>
+                        <div class="menu-label">2. Company Details</div>
+                    </li>
+                    <li class="sidebar-menu-item inactive">
+                        <div class="menu-circle"></div>
+                        <div class="menu-label">3. Contact Information</div>
+                    </li>
+                    <li class="sidebar-menu-item inactive">
+                        <div class="menu-circle"></div>
+                        <div class="menu-label">4. Services</div>
+                    </li>
+                    <li class="sidebar-menu-item inactive">
+                        <div class="menu-circle"></div>
+                        <div class="menu-label">5. Banking Details</div>
+                    </li>
+                    <li class="sidebar-menu-item inactive">
+                        <div class="menu-circle"></div>
+                        <div class="menu-label">6. Documents</div>
+                    </li>
+                    <li class="sidebar-menu-item inactive">
+                        <div class="menu-circle"></div>
+                        <div class="menu-label">7. Review & Submit</div>
+                    </li>
+                </ul>
+                <div class="help-button">Need Help?</div>
+            </aside>
+
+            <main class="content">
+                <div class="content-header">
+                    <h1 class="content-title">Select Vendor Type</h1>
+                    <p class="content-description">Choose the category that best describes your business relationship with us.</p>
+                </div>
+
+                <div class="vendor-cards">
+                    <div class="vendor-card card-type1 vendor-card-selected">
+                        <div class="card-stripe"></div>
+                        <div class="card-header">
+                            <div class="card-circle">1</div>
+                            <h2 class="card-title">Company/Organization</h2>
+                        </div>
+                        <p class="card-description">For registered businesses providing goods or services to our organization</p>
+                        <ul class="card-features">
+                            <li class="card-feature">Trade license required</li>
+                            <li class="card-feature">Multiple users supported</li>
+                            <li class="card-feature">Full service catalog</li>
+                        </ul>
+                    </div>
+
+                    <div class="vendor-card card-type2">
+                        <div class="card-stripe"></div>
+                        <div class="card-header">
+                            <div class="card-circle">2</div>
+                            <h2 class="card-title">Individual/Freelancer</h2>
+                        </div>
+                        <p class="card-description">For independent professionals providing specialized services</p>
+                        <ul class="card-features">
+                            <li class="card-feature">Personal ID verification</li>
+                            <li class="card-feature">Simplified approval process</li>
+                            <li class="card-feature">Individual skills catalog</li>
+                        </ul>
+                    </div>
+
+                    <div class="vendor-card card-type3">
+                        <div class="card-stripe"></div>
+                        <div class="card-header">
+                            <div class="card-circle">3</div>
+                            <h2 class="card-title">Speaker</h2>
+                        </div>
+                        <p class="card-description">For professional speakers at our events and educational programs</p>
+                        <ul class="card-features">
+                            <li class="card-feature">Speaker bio and topics</li>
+                            <li class="card-feature">Fee structure</li>
+                            <li class="card-feature">Media and presentation info</li>
+                        </ul>
+                    </div>
+
+                    <div class="vendor-card card-type4">
+                        <div class="card-stripe"></div>
+                        <div class="card-header">
+                            <div class="card-circle">4</div>
+                            <h2 class="card-title">Grant Winner</h2>
+                        </div>
+                        <p class="card-description">For recipients of grant funding and disbursements</p>
+                        <ul class="card-features">
+                            <li class="card-feature">Project and grant details</li>
+                            <li class="card-feature">Milestone tracking</li>
+                            <li class="card-feature">Reporting requirements</li>
+                        </ul>
+                    </div>
+
+                    <div class="vendor-card card-type5">
+                        <div class="card-stripe"></div>
+                        <div class="card-header">
+                            <div class="card-circle">5</div>
+                            <h2 class="card-title">Partnership</h2>
+                        </div>
+                        <p class="card-description">For strategic partnership pre-registration and collaboration</p>
+                        <ul class="card-features">
+                            <li class="card-feature">Value proposition</li>
+                            <li class="card-feature">Capability overview</li>
+                            <li class="card-feature">Executive sponsorship</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <p class="footer-note">You can change your vendor type later if needed, subject to approval.</p>
+
+                <div class="button-container">
+                    <button class="button button-secondary">Cancel</button>
+                    <button class="button button-primary">Next</button>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
