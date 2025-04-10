@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vendor Portal Dashboard - Chat in Sidebar</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Base Styles from original file */
+    .notification-badge {
+      position: absolute;
+      top: -5px; /* */
+      right: -5px; /* */
+    }
+    .task-priority-high {
+      border-left: 4px solid #ef4444; /* */
+    }
+    .task-priority-medium {
+      border-left: 4px solid #f59e0b; /* */
+    }
+    .task-priority-low {
+      border-left: 4px solid #10b981; /* */
+    }
+
+    /* Dark mode classes from original file */
+    .dark { color-scheme: dark; } /* */
+    .dark body { background-color: #111827; } /* */
+    .dark .bg-white { background-color: #1f2937; } /* */
+    .dark .text-gray-900 { color: #f9fafb; } /* */
+    .dark .text-gray-700 { color: #e5e7eb; } /* */
+    .dark .text-gray-600 { color: #d1d5db; } /* */
+    .dark .text-gray-500 { color: #9ca3af; } /* */
+    .dark .border-gray-200 { border-color: #374151; } /* */
+    .dark .shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2); } /* */
+    .dark .divide-gray-200 > * { border-color: #374151; } /* */
+    .dark .bg-gray-100 { background-color: #1f2937; } /* */
+    .dark .bg-gray-50 { background-color: #111827; } /* */
+    .dark .bg-blue-50 { background-color: rgba(59, 130, 246, 0.2); } /* */
+    .dark .bg-purple-50 { background-color: rgba(139, 92, 246, 0.2); } /* */
+    .dark .bg-green-50 { background-color: rgba(16, 185, 129, 0.2); } /* */
+    .dark .bg-yellow-50 { background-color: rgba(245, 158, 11, 0.2); } /* */
+    .dark .bg-red-50 { background-color: rgba(239, 68, 68, 0.2); } /* */
+    /* Added Dark Mode for Metric Cards */
+    .dark .metric-card-blue { background-color: rgba(59, 130, 246, 0.15); }
+    .dark .metric-card-green { background-color: rgba(16, 185, 129, 0.15); }
+    .dark .metric-card-yellow { background-color: rgba(245, 158, 11, 0.15); }
+    .dark .metric-text-blue { color: #60a5fa; } /* Lighter blue for dark */
+    .dark .metric-text-darkblue { color: #93c5fd; } /* Even lighter blue */
+    .dark .metric-text-green { color: #34d399; } /* Lighter green */
+    .dark .metric-text-orange { color: #fcd34d; } /* Lighter orange/yellow */
+    .dark .metric-subtext { color: #9ca3af; } /* Gray 400 */
+    .dark .metric-trend-up { color: #34d399; } /* Green */
+    .dark .metric-trend-down { color: #f87171; } /* Red */
+
+
+    /* Transitions from original file */
+    .transition-colors {
+      transition-property: background-color, border-color, color, fill, stroke; /* */
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* */
+      transition-duration: 150ms; /* */
+    }
+    .transition-all {
+        transition-property: all;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 150ms;
+    }
+
+    /* Sidebar styling from original file */
+    .sidebar {
+      width: 250px; /* */
+      transition: width 0.3s ease; /* */
+    }
+    .sidebar.collapsed {
+      width: 70px; /* */
+    }
+    .sidebar-icon {
+      min-width: 24px; /* */
+    }
+    .sidebar-label {
+        transition: opacity 0.3s ease;
+    }
+    .sidebar.collapsed .sidebar-label {
+        opacity: 0;
+        width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    .sidebar.collapsed .ml-3 {
+        margin-left: 0;
+    }
+    .sidebar.collapsed .justify-between {
+        justify-content: center;
+    }
+     .sidebar.collapsed .w-full {
+        width: auto;
+    }
+
+    /* Detail panel styling from original file (assuming it would be added) */
+    .detail-panel {
+      width: 300px; /* */
+      transition: transform 0.3s ease; /* */
+      position: fixed; /* Added for demonstration */
+      right: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 30; /* Above sidebar */
+      background-color: #ffffff; /* Light mode bg */
+    }
+    .dark .detail-panel {
+        background-color: #1f2937; /* Dark mode bg */
+    }
+    .detail-panel.hidden {
+      transform: translateX(100%); /* */
+    }
+
+    /* --- Chat Modal Styling --- */
+    .chat-modal-overlay {
+        position: fixed;
+        inset: 0; /* top, right, bottom, left = 0 */
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+    .chat-modal-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    .chat-window {
+      /* Removed fixed positioning relative to viewport corner */
+      width: 370px; /* Slightly wider */
+      max-height: 80vh; /* Limit height */
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      /* Add transform for subtle animation */
+      transform: scale(0.95);
+      transition: transform 0.3s ease;
+    }
+    .chat-modal-overlay.open .chat-window {
+        transform: scale(1);
+    }
+    .dark .chat-window {
+        background-color: #1f2937; /* Dark mode bg */
+        border: 1px solid #374151;
+    }
+    .chat-header {
+      background-color: #f3f4f6; /* Light gray */
+      padding: 12px 16px;
+      font-weight: 600;
+      border-bottom: 1px solid #e5e7eb; /* Lighter gray border */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0; /* Prevent header from shrinking */
+    }
+    .dark .chat-header {
+        background-color: #374151; /* Darker gray for dark mode */
+        border-bottom-color: #4b5563;
+    }
+    .chat-body {
+      flex-grow: 1; /* Allow body to take up space */
+      padding: 16px;
+      overflow-y: auto; /* Enable scrolling */
+      display: flex;
+      flex-direction: column;
+      gap: 12px; /* Space between messages */
+    }
+    .chat-message {
+        padding: 8px 12px;
+        border-radius: 10px;
+        max-width: 80%;
+        word-wrap: break-word;
+        font-size: 0.875rem; /* text-sm */
+    }
+    .chat-message.sent {
+        background-color: #dbeafe; /* Light blue */
+        color: #1e40af; /* Dark blue */
+        align-self: flex-end;
+        border-bottom-right-radius: 0;
+    }
+    .dark .chat-message.sent {
+        background-color: #2563eb;
+        color: #ffffff;
+    }
+    .chat-message.received {
+        background-color: #e5e7eb; /* Light gray */
+        color: #1f2937; /* Dark gray */
+        align-self: flex-start;
+        border-bottom-left-radius: 0;
+    }
+    .dark .chat-message.received {
+        background-color: #4b5563;
+        color: #f3f4f6;
+    }
+    .chat-footer {
+      padding: 12px;
+      border-top: 1px solid #e5e7eb; /* Lighter gray border */
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0; /* Prevent footer from shrinking */
+    }
+     .dark .chat-footer {
+         border-top-color: #4b5563;
+     }
+    .chat-input {
+      flex-grow: 1;
+      border: 1px solid #d1d5db; /* Gray border */
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+    .dark .chat-input {
+        background-color: #374151;
+        border-color: #6b7280;
+        color: #f3f4f6;
+    }
+    .chat-send-button {
+      background-color: #2563eb; /* Blue */
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      flex-shrink: 0;
+    }
+     .chat-send-button:hover {
+       background-color: #1d4ed8; /* Darker blue */
+     }
+    /* --- End Chat Modal Styling --- */
+
+
+    /* Added: Microinteraction Example - Checkbox */
+    input[type="checkbox"] {
+        appearance: none;
+        width: 1.25em;
+        height: 1.25em;
+        border: 2px solid #9ca3af; /* Gray */
+        border-radius: 4px;
+        vertical-align: middle;
+        cursor: pointer;
+        transition: border-color 0.2s ease, background-color 0.2s ease;
+        position: relative;
+        margin-right: 0.75rem; /* Tailwind mr-3 equivalent */
+        margin-top: 0.125rem; /* Tailwind mt-1ish */
+        flex-shrink: 0; /* Prevent checkbox from shrinking */
+    }
+    input[type="checkbox"]:checked {
+        background-color: #2563eb; /* Blue */
+        border-color: #2563eb;
+    }
+    input[type="checkbox"]:checked::after {
+        content: '\f00c'; /* Font Awesome Check */
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        color: white;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        transition: transform 0.2s ease;
+    }
+    input[type="checkbox"]:hover {
+        border-color: #6b7280; /* Darker gray on hover */
+    }
+     .dark input[type="checkbox"] {
+         border-color: #6b7280;
+     }
+     .dark input[type="checkbox"]:checked {
+         background-color: #3b82f6; /* Brighter blue for dark */
+         border-color: #3b82f6;
+     }
+     .dark input[type="checkbox"]:hover {
+         border-color: #9ca3af;
+     }
+
+    /* Added: Skeleton Loader Example */
+    .skeleton {
+        background-color: #e5e7eb; /* Light gray */
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+    }
+    .dark .skeleton {
+         background-color: #374151; /* Darker gray for dark mode */
+    }
+    .skeleton::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -150%;
+        height: 100%;
+        width: 150%;
+        background: linear-gradient(to right, transparent 0%, #f3f4f6 50%, transparent 100%); /* Slightly lighter gray shimmer */
+        animation: shimmer 1.5s infinite;
+    }
+    .dark .skeleton::after {
+         background: linear-gradient(to right, transparent 0%, #4b5563 50%, transparent 100%); /* Dark mode shimmer */
+    }
+    @keyframes shimmer {
+        100% {
+            left: 150%;
+        }
+    }
+  </style>
+</head>
+<body class="bg-gray-100 transition-colors">
+  <div class="min-h-screen flex">
+    <aside id="sidebar" class="sidebar bg-white shadow h-screen sticky top-0 z-20 transition-colors">
+      <div class="flex flex-col h-full">
+        <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+          <div class="flex items-center">
+            <img src="/api/placeholder/40/40" alt="Logo" class="h-8 w-8">
+            <h1 class="ml-3 text-xl font-bold text-gray-900 sidebar-label">Vendor Portal</h1>
+          </div>
+          <button id="toggleSidebar" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+
+        <nav class="flex-grow py-4 overflow-y-auto"> <ul class="space-y-1">
+            <li>
+              <a href="#" class="flex items-center px-4 py-3 text-blue-600 bg-blue-50 rounded-lg mx-2">
+                <i class="fas fa-home sidebar-icon text-xl"></i>
+                <span class="ml-3 sidebar-label">Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg mx-2">
+                <i class="fas fa-user-circle sidebar-icon text-xl"></i>
+                <span class="ml-3 sidebar-label">Profile</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg mx-2">
+                <i class="fas fa-gavel sidebar-icon text-xl"></i>
+                <span class="ml-3 sidebar-label">Tenders</span>
+              </a>
+            </li>
+             <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg mx-2">
+                <i class="fas fa-file-contract sidebar-icon text-xl"></i>
+                <span class="ml-3 sidebar-label">POs & Contracts</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg mx-2">
+                <i class="fas fa-file-invoice-dollar sidebar-icon text-xl"></i>
+                <span class="ml-3 sidebar-label">Invoices</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg mx-2">
+                <i class="fas fa-truck sidebar-icon text-xl"></i>
+                <span class="ml-3 sidebar-label">Deliveries</span>
+              </a>
+            </li>
+             <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg mx-2">
+                <i class="fas fa-life-ring sidebar-icon text-xl"></i> <span class="ml-3 sidebar-label">Support Center</span> </a>
+            </li>
+             <li>
+              <button id="openChatModalButton" class="w-full flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg mx-2">
+                <i class="fas fa-comments sidebar-icon text-xl"></i> <span class="ml-3 sidebar-label">Live Chat</span>
+              </button>
+            </li>
+             <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg mx-2">
+                <i class="fas fa-cog sidebar-icon text-xl"></i>
+                <span class="ml-3 sidebar-label">Settings</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="p-4 border-t border-gray-200 mt-auto"> <button class="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-2 px-4 flex items-center justify-center">
+            <i class="fas fa-plus mr-2 sidebar-icon"></i>
+            <span class="sidebar-label">Create New</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="flex-grow flex flex-col">
+      <header class="bg-white shadow z-10 transition-colors">
+        <div class="px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <button class="md:hidden text-gray-500 hover:text-gray-700 mr-2">
+              <i class="fas fa-bars"></i>
+            </button>
+            <h2 class="text-xl font-bold text-gray-900">Dashboard</h2>
+          </div>
+          <div class="flex items-center space-x-4">
+            <button id="darkModeToggle" class="text-gray-500 hover:text-gray-700">
+              <i class="fas fa-moon text-xl"></i>
+            </button>
+            <div class="relative">
+              <button class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-bell text-xl"></i>
+                <span class="notification-badge flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">5</span>
+              </button>
+            </div>
+            <div class="hidden md:flex items-center bg-gray-100 rounded-lg px-3 py-1 dark:bg-gray-700">
+              <i class="fas fa-search text-gray-500 mr-2"></i>
+              <input type="text" placeholder="Search..." class="bg-transparent border-none focus:outline-none text-sm text-gray-700 dark:text-gray-300">
+            </div>
+            <div class="flex items-center space-x-2">
+              <img src="/api/placeholder/32/32" alt="User Avatar" class="h-8 w-8 rounded-full">
+              <div class="hidden md:block">
+                <p class="text-sm font-medium text-gray-700">John Doe</p>
+                <p class="text-xs text-gray-500">Vendor Admin</p>
+              </div>
+              <button class="text-gray-500">
+                <i class="fas fa-chevron-down"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="flex-grow p-4 sm:p-6 lg:p-8 overflow-auto bg-gray-100 transition-colors">
+        <div class="max-w-full">
+
+          <div class="mb-6">
+            <div class="bg-white rounded-lg shadow p-6 transition-colors">
+              <div class="flex flex-wrap justify-between items-center mb-4">
+                <h2 class="text-lg md:text-xl font-bold text-gray-900">Welcome back, John!</h2>
+                <div class="mt-2 sm:mt-0">
+                  <span class="text-sm text-gray-500">Vendor ID: VEN-12345</span>
+                  <span class="mx-2 text-gray-300">|</span>
+                  <span class="text-sm text-gray-500">Status: <span class="text-green-600 font-medium">Active</span></span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 md:gap-4">
+                <button class="flex flex-col items-center justify-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition dark:hover:bg-blue-900">
+                  <i class="fas fa-file-invoice text-blue-600 text-2xl mb-2 dark:text-blue-400"></i>
+                  <span class="text-xs text-center text-gray-700 dark:text-gray-300">Create Invoice</span>
+                </button>
+                <button class="flex flex-col items-center justify-center p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition dark:hover:bg-purple-900">
+                  <i class="fas fa-truck text-purple-600 text-2xl mb-2 dark:text-purple-400"></i>
+                  <span class="text-xs text-center text-gray-700 dark:text-gray-300">Record Delivery</span>
+                </button>
+                <button class="flex flex-col items-center justify-center p-3 bg-green-50 rounded-lg hover:bg-green-100 transition dark:hover:bg-green-900">
+                  <i class="fas fa-file-contract text-green-600 text-2xl mb-2 dark:text-green-400"></i>
+                  <span class="text-xs text-center text-gray-700 dark:text-gray-300">View POs</span>
+                </button>
+                <button class="flex flex-col items-center justify-center p-3 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition dark:hover:bg-yellow-900">
+                  <i class="fas fa-gavel text-yellow-600 text-2xl mb-2 dark:text-yellow-400"></i>
+                  <span class="text-xs text-center text-gray-700 dark:text-gray-300">View Tenders</span>
+                </button>
+                <button class="flex flex-col items-center justify-center p-3 bg-red-50 rounded-lg hover:bg-red-100 transition dark:hover:bg-red-900">
+                  <i class="fas fa-user-cog text-red-600 text-2xl mb-2 dark:text-red-400"></i>
+                  <span class="text-xs text-center text-gray-700 dark:text-gray-300">Profile</span>
+                </button>
+                <button class="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition dark:bg-gray-800 dark:hover:bg-gray-700">
+                  <i class="fas fa-life-ring text-gray-600 text-2xl mb-2 dark:text-gray-400"></i> <span class="text-xs text-center text-gray-700 dark:text-gray-300">Support</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-6">
+               <div class="flex items-center mb-3">
+                 <i class="fas fa-chart-pie text-xl text-gray-700 dark:text-gray-300 mr-2"></i>
+                 <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Summary Overview</h3>
+               </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div class="bg-blue-50 metric-card-blue rounded-lg shadow p-4 flex items-start space-x-3 transition-colors">
+                      <div class="bg-blue-200 dark:bg-blue-800 p-2 rounded-full flex-shrink-0">
+                         <i class="fas fa-file-invoice-dollar text-blue-600 dark:text-blue-300 text-lg"></i>
+                      </div>
+                      <div>
+                         <p class="text-sm text-blue-700 metric-text-blue font-medium">Open Invoices</p>
+                         <p class="text-2xl font-bold text-gray-900">5</p>
+                         <p class="text-xs text-gray-500 metric-subtext flex items-center">
+                            <i class="fas fa-arrow-trend-down text-red-600 metric-trend-down mr-1"></i>
+                            <span class="text-red-600 metric-trend-down mr-1">2</span> since last month
+                         </p>
+                      </div>
+                  </div>
+                  <div class="bg-green-50 metric-card-green rounded-lg shadow p-4 flex items-start space-x-3 transition-colors">
+                       <div class="bg-green-200 dark:bg-green-800 p-2 rounded-full flex-shrink-0">
+                         <i class="fas fa-file-contract text-green-600 dark:text-green-300 text-lg"></i>
+                      </div>
+                      <div>
+                         <p class="text-sm text-green-700 metric-text-green font-medium">Active POs</p>
+                         <p class="text-2xl font-bold text-gray-900">3</p>
+                         <p class="text-xs text-gray-500 metric-subtext flex items-center">
+                             <i class="fas fa-arrow-trend-up text-green-600 metric-trend-up mr-1"></i>
+                             <span class="text-green-600 metric-trend-up mr-1">1</span> since last month
+                         </p>
+                       </div>
+                  </div>
+                  <div class="bg-yellow-50 metric-card-yellow rounded-lg shadow p-4 flex items-start space-x-3 transition-colors">
+                       <div class="bg-yellow-200 dark:bg-yellow-800 p-2 rounded-full flex-shrink-0">
+                         <i class="fas fa-dollar-sign text-yellow-600 dark:text-yellow-300 text-lg"></i>
+                       </div>
+                      <div>
+                         <p class="text-sm text-yellow-700 metric-text-orange font-medium">Outstanding</p>
+                         <p class="text-2xl font-bold text-gray-900">$47.2K</p>
+                         <p class="text-xs text-gray-500 metric-subtext flex items-center">
+                             <i class="fas fa-arrow-trend-down text-red-600 metric-trend-down mr-1"></i>
+                             <span class="text-red-600 metric-trend-down mr-1">$12K</span> since last month
+                         </p>
+                      </div>
+                  </div>
+                   <div class="bg-blue-50 metric-card-blue rounded-lg shadow p-4 flex items-start space-x-3 transition-colors">
+                       <div class="bg-blue-200 dark:bg-blue-800 p-2 rounded-full flex-shrink-0">
+                          <i class="fas fa-calendar-check text-blue-700 dark:text-blue-300 text-lg"></i>
+                       </div>
+                       <div>
+                           <p class="text-sm text-blue-800 metric-text-darkblue font-medium">Avg. Payment</p>
+                           <p class="text-2xl font-bold text-gray-900">23 <span class="text-base font-normal">days</span></p>
+                           <p class="text-xs text-gray-500 metric-subtext flex items-center">
+                               <i class="fas fa-arrow-trend-up text-green-600 metric-trend-up mr-1"></i>
+                               <span class="text-green-600 metric-trend-up">2 days</span> improvement
+                           </p>
+                       </div>
+                   </div>
+              </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="lg:col-span-2 space-y-6">
+              <div class="bg-white rounded-lg shadow overflow-hidden transition-colors">
+                <div class="p-4 bg-blue-700 text-white flex justify-between items-center dark:bg-blue-900">
+                  <h3 class="font-semibold">Announcements</h3>
+                  <button class="text-sm text-blue-100 hover:text-white dark:text-blue-300 dark:hover:text-blue-100">View All</button>
+                </div>
+                <div class="divide-y divide-gray-200">
+                  <div class="p-4">
+                    <div class="flex justify-between items-start">
+                      <h4 class="font-medium text-gray-900">New Invoice Submission Process</h4>
+                      <span class="text-xs text-gray-500">2 days ago</span>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-600">Effective May 1, all invoice submissions must include the PO number in the file name to expedite processing.</p>
+                  </div>
+                  <div class="p-4">
+                    <div class="flex justify-between items-start">
+                      <h4 class="font-medium text-gray-900">System Maintenance</h4>
+                      <span class="text-xs text-gray-500">1 week ago</span>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-600">The portal will be unavailable on April 10 from 10 PM to 2 AM for scheduled maintenance.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-white rounded-lg shadow overflow-hidden transition-colors">
+                <div class="p-4 bg-gray-800 text-white flex justify-between items-center dark:bg-gray-600">
+                  <h3 class="font-semibold">Recent Activity</h3>
+                  <button class="text-sm text-gray-300 hover:text-white dark:text-gray-200 dark:hover:text-white">View All</button>
+                </div>
+                <div class="divide-y divide-gray-200">
+                   <div class="p-4 flex items-start">
+                    <div class="bg-blue-100 dark:bg-blue-900 rounded-full p-2 mr-3 flex-shrink-0">
+                      <i class="fas fa-file-invoice text-blue-600 dark:text-blue-400"></i>
+                    </div>
+                    <div class="flex-grow">
+                      <div class="flex justify-between items-center">
+                        <h4 class="font-medium"><a href="#invoice-detail-panel" class="hover:underline text-gray-900" onclick="openDetailPanel('invoice', 'INV-2023-042')">Invoice #INV-2023-042 submitted</a></h4>
+                        <span class="text-xs text-gray-500">Today, 10:30 AM</span>
+                      </div>
+                      <p class="mt-1 text-sm text-gray-600">Related to <a href="#po-detail-panel" class="text-blue-600 hover:underline dark:text-blue-400" onclick="openDetailPanel('po', 'PO-2023-156')">PO #PO-2023-156</a> • $12,450.00</p>
+                    </div>
+                  </div>
+                  <div class="p-4 flex items-start">
+                    <div class="bg-green-100 dark:bg-green-900 rounded-full p-2 mr-3 flex-shrink-0">
+                      <i class="fas fa-check text-green-600 dark:text-green-400"></i>
+                    </div>
+                    <div class="flex-grow">
+                      <div class="flex justify-between items-center">
+                        <h4 class="font-medium"><a href="#po-detail-panel" class="hover:underline text-gray-900" onclick="openDetailPanel('po', 'PO-2023-159')">PO #PO-2023-159 acknowledged</a></h4>
+                        <span class="text-xs text-gray-500">Yesterday, 03:45 PM</span>
+                      </div>
+                      <p class="mt-1 text-sm text-gray-600">Office Supplies • $3,275.00</p>
+                    </div>
+                  </div>
+                  <div class="p-4 flex items-start">
+                    <div class="bg-purple-100 dark:bg-purple-900 rounded-full p-2 mr-3 flex-shrink-0">
+                      <i class="fas fa-truck text-purple-600 dark:text-purple-400"></i>
+                    </div>
+                    <div class="flex-grow">
+                      <div class="flex justify-between items-center">
+                        <h4 class="font-medium"><a href="#delivery-detail-panel" class="hover:underline text-gray-900" onclick="openDetailPanel('delivery', 'PO-2023-142')">Delivery confirmed for PO #PO-2023-142</a></h4>
+                        <span class="text-xs text-gray-500">April 3, 2025, 11:20 AM</span>
+                      </div>
+                      <p class="mt-1 text-sm text-gray-600">IT Equipment • $8,920.00</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-6">
+              <div class="bg-white rounded-lg shadow overflow-hidden transition-colors">
+                <div class="p-4 bg-indigo-700 text-white flex justify-between items-center dark:bg-indigo-800">
+                  <h3 class="font-semibold">Calendar</h3>
+                  <div>
+                    <button class="text-indigo-200 hover:text-white mr-2 dark:text-indigo-300 dark:hover:text-indigo-100">
+                      <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="text-indigo-200 hover:text-white dark:text-indigo-300 dark:hover:text-indigo-100">
+                      <i class="fas fa-chevron-right"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="p-4">
+                  <div class="flex justify-between items-center mb-4">
+                    <h4 class="font-medium text-gray-900">April 2025</h4>
+                    <button class="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">View Full Calendar</button>
+                  </div>
+                  <div class="grid grid-cols-7 gap-1 text-center text-xs">
+                     <div class="text-gray-500 font-medium">Su</div> <div class="text-gray-500 font-medium">Mo</div> <div class="text-gray-500 font-medium">Tu</div> <div class="text-gray-500 font-medium">We</div> <div class="text-gray-500 font-medium">Th</div> <div class="text-gray-500 font-medium">Fr</div> <div class="text-gray-500 font-medium">Sa</div>
+                    <div class="py-1 text-gray-400 dark:text-gray-600">30</div><div class="py-1 text-gray-400 dark:text-gray-600">31</div>
+                    <div class="py-1 text-gray-900">1</div><div class="py-1 text-gray-900">2</div><div class="py-1 text-gray-900">3</div><div class="py-1 text-gray-900">4</div>
+                    <div class="py-1 bg-blue-100 dark:bg-blue-900 rounded font-medium text-blue-800 dark:text-blue-200">5</div>
+                    <div class="py-1 text-gray-900">6</div><div class="py-1 text-gray-900">7</div><div class="py-1 text-gray-900">8</div><div class="py-1 text-gray-900">9</div>
+                    <div class="py-1 bg-yellow-100 dark:bg-yellow-900 rounded font-medium text-yellow-800 dark:text-yellow-200">10</div>
+                    <div class="py-1 text-gray-900">11</div><div class="py-1 text-gray-900">12</div><div class="py-1 text-gray-900">13</div><div class="py-1 text-gray-900">14</div>
+                    <div class="py-1 bg-green-100 dark:bg-green-900 rounded font-medium text-green-800 dark:text-green-200">15</div>
+                    <div class="py-1 text-gray-900">16</div><div class="py-1 text-gray-900">17</div><div class="py-1 text-gray-900">18</div><div class="py-1 text-gray-900">19</div>
+                    <div class="py-1 text-gray-900">20</div><div class="py-1 text-gray-900">21</div><div class="py-1 text-gray-900">22</div><div class="py-1 text-gray-900">23</div>
+                    <div class="py-1 text-gray-900">24</div><div class="py-1 bg-red-100 dark:bg-red-900 rounded font-medium text-red-800 dark:text-red-200">25</div>
+                    <div class="py-1 text-gray-900">26</div><div class="py-1 text-gray-900">27</div><div class="py-1 text-gray-900">28</div><div class="py-1 text-gray-900">29</div><div class="py-1 text-gray-900">30</div>
+                    <div class="py-1 text-gray-400 dark:text-gray-600">1</div><div class="py-1 text-gray-400 dark:text-gray-600">2</div><div class="py-1 text-gray-400 dark:text-gray-600">3</div>
+                  </div>
+                  <div class="mt-4 space-y-2">
+                    <h5 class="text-sm font-medium text-gray-900">Upcoming Events</h5>
+                    <div class="flex items-start text-xs">
+                      <div class="bg-blue-500 rounded-full h-3 w-3 mt-1 mr-2 flex-shrink-0"></div>
+                      <div>
+                        <div class="font-medium text-gray-700">Invoice Submission Deadline</div>
+                        <div class="text-gray-500">April 5, 2025</div>
+                      </div>
+                    </div>
+                    <div class="flex items-start text-xs">
+                      <div class="bg-yellow-500 rounded-full h-3 w-3 mt-1 mr-2 flex-shrink-0"></div>
+                      <div>
+                        <div class="font-medium text-gray-700">System Maintenance</div>
+                        <div class="text-gray-500">April 10, 10 PM - 2 AM</div>
+                      </div>
+                    </div>
+                    <div class="flex items-start text-xs">
+                      <div class="bg-green-500 rounded-full h-3 w-3 mt-1 mr-2 flex-shrink-0"></div>
+                      <div>
+                        <div class="font-medium text-gray-700">PO #PO-2023-164 Delivery Due</div>
+                        <div class="text-gray-500">April 15, 2025</div>
+                      </div>
+                    </div>
+                    <div class="flex items-start text-xs">
+                      <div class="bg-red-500 rounded-full h-3 w-3 mt-1 mr-2 flex-shrink-0"></div>
+                      <div>
+                        <div class="font-medium text-gray-700">Quarterly Business Review</div>
+                        <div class="text-gray-500">April 25, 2025 • 10:00 AM</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-white rounded-lg shadow overflow-hidden transition-colors">
+                <div class="p-4 bg-orange-600 text-white flex justify-between items-center dark:bg-orange-700">
+                  <h3 class="font-semibold">Tasks</h3>
+                  <button class="text-sm text-orange-100 hover:text-white dark:text-orange-200 dark:hover:text-white">
+                    <i class="fas fa-plus"></i> New Task
+                  </button>
+                </div>
+                <div class="divide-y divide-gray-200">
+                  <div class="p-4 task-priority-high">
+                    <div class="flex items-start">
+                      <input type="checkbox" id="task1">
+                      <div class="flex-grow">
+                        <div class="flex justify-between items-start">
+                          <label for="task1" class="font-medium text-gray-900 cursor-pointer">Update banking information</label>
+                          <span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded dark:bg-red-900 dark:text-red-300">High</span>
+                        </div>
+                        <p class="mt-1 text-sm text-gray-600">Update banking details for new fiscal year</p>
+                        <div class="mt-2 flex justify-between items-center text-xs text-gray-500">
+                          <span>Due: Apr 8, 2025</span>
+                          <button class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Edit</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="p-4 task-priority-medium">
+                    <div class="flex items-start">
+                      <input type="checkbox" id="task2">
+                      <div class="flex-grow">
+                        <div class="flex justify-between items-start">
+                          <label for="task2" class="font-medium text-gray-900 cursor-pointer">Review new PO</label>
+                          <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">Medium</span>
+                        </div>
+                        <p class="mt-1 text-sm text-gray-600">Review and acknowledge <a href="#po-detail-panel" class="text-blue-600 hover:underline dark:text-blue-400" onclick="openDetailPanel('po', 'PO-2023-164')">PO #PO-2023-164</a></p>
+                        <div class="mt-2 flex justify-between items-center text-xs text-gray-500">
+                          <span>Due: Apr 12, 2025</span>
+                          <button class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Edit</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="p-4 task-priority-low">
+                    <div class="flex items-start">
+                      <input type="checkbox" id="task3" checked>
+                      <div class="flex-grow">
+                        <div class="flex justify-between items-start">
+                          <label for="task3" class="font-medium cursor-pointer line-through text-gray-500">Complete quarterly survey</label>
+                          <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Low</span>
+                        </div>
+                        <p class="mt-1 text-sm text-gray-600 line-through">Vendor satisfaction survey for Q1 2025.</p>
+                        <div class="mt-2 flex justify-between items-center text-xs text-gray-500">
+                           <span>Completed: Apr 4, 2025</span>
+                           <button class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">View</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+
+    <aside id="detailPanel" class="detail-panel shadow hidden border-l border-gray-200 transition-colors">
+        <div class="h-full flex flex-col">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 id="detailPanelTitle" class="font-semibold text-gray-900">Details</h3>
+                <button onclick="closeDetailPanel()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="detailPanelContent" class="flex-grow p-4 overflow-y-auto">
+                 <p class="text-gray-500">Select an item to view details.</p>
+            </div>
+             <div class="p-4 border-t border-gray-200">
+                 <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg py-2 px-4 text-sm dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300">
+                     View Full Record
+                 </button>
+             </div>
+        </div>
+    </aside>
+
+    <div id="chatModalOverlay" class="chat-modal-overlay">
+        <div id="chatWindow" class="chat-window transition-colors">
+            <div class="chat-header">
+                <span class="text-gray-900">Live Support</span>
+                <button id="closeChatModalButton" class="text-gray-500 hover:text-gray-700">
+                     <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chat-body" id="chatBody">
+                <div class="chat-message received">Hi John! How can I help you with procurement today?</div>
+                 <div class="chat-message sent">I have a question about PO #PO-2023-159.</div>
+                 <div class="chat-message received">Sure, what's your question about PO #PO-2023-159?</div>
+            </div>
+            <div class="chat-footer">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Type your message...">
+                <button id="chatSendButton" class="chat-send-button">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+  <script>
+    // Basic Dark Mode Toggle
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const body = document.body;
+    const moonIcon = '<i class="fas fa-moon text-xl"></i>';
+    const sunIcon = '<i class="fas fa-sun text-xl"></i>';
+
+    const applyTheme = (theme) => {
+        if (theme === 'dark') {
+            body.classList.add('dark');
+            darkModeToggle.innerHTML = sunIcon;
+        } else {
+            body.classList.remove('dark');
+            darkModeToggle.innerHTML = moonIcon;
+        }
+    };
+
+    darkModeToggle.addEventListener('click', () => {
+      const newTheme = body.classList.contains('dark') ? 'light' : 'dark';
+      localStorage.setItem('theme', newTheme);
+      applyTheme(newTheme);
+    });
+
+    // Apply saved theme on load
+    const savedTheme = localStorage.getItem('theme') || 'light'; // Default to light
+    applyTheme(savedTheme);
+
+
+    // Basic Sidebar Toggle
+    const toggleSidebar = document.getElementById('toggleSidebar');
+    const sidebar = document.getElementById('sidebar');
+    toggleSidebar.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+    });
+
+    // Basic Detail Panel Interaction
+    const detailPanel = document.getElementById('detailPanel');
+    const detailPanelTitle = document.getElementById('detailPanelTitle');
+    const detailPanelContent = document.getElementById('detailPanelContent');
+
+    function openDetailPanel(type, id) {
+        detailPanelTitle.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} Details: ${id}`;
+        detailPanelContent.innerHTML = `
+            <div class="space-y-2 animate-pulse">
+                <div class="skeleton h-4 w-3/4"></div>
+                <div class="skeleton h-3 w-1/2"></div>
+                <div class="skeleton h-3 w-5/6"></div>
+                <div class="skeleton h-8 w-full mt-4"></div>
+            </div>`;
+        detailPanel.classList.remove('hidden');
+         setTimeout(() => {
+             detailPanelContent.innerHTML = `<p>Details for ${type} <strong>${id}</strong> would load here.</p><p>Status: Pending</p><p>Amount: $XXX.XX</p>`;
+         }, 800);
+    }
+
+    function closeDetailPanel() {
+        detailPanel.classList.add('hidden');
+    }
+
+     // **** MODIFIED: Chat Modal Interaction ****
+     const openChatModalButton = document.getElementById('openChatModalButton');
+     const chatModalOverlay = document.getElementById('chatModalOverlay');
+     const closeChatModalButton = document.getElementById('closeChatModalButton');
+     const chatSendButton = document.getElementById('chatSendButton');
+     const chatInput = document.getElementById('chatInput');
+     const chatBody = document.getElementById('chatBody');
+
+     openChatModalButton.addEventListener('click', () => {
+         chatModalOverlay.classList.add('open');
+         chatInput.focus(); // Focus input when modal opens
+     });
+
+     const closeChatModal = () => {
+         chatModalOverlay.classList.remove('open');
+     }
+
+     closeChatModalButton.addEventListener('click', closeChatModal);
+
+     // Close modal if clicked outside the chat window
+     chatModalOverlay.addEventListener('click', (event) => {
+         if (event.target === chatModalOverlay) {
+             closeChatModal();
+         }
+     });
+
+
+     function addChatMessage(message, type) {
+         const messageElement = document.createElement('div');
+         messageElement.classList.add('chat-message', type);
+         messageElement.textContent = message;
+         chatBody.appendChild(messageElement);
+         // Scroll to the bottom of the chat body smoothly
+         chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: 'smooth' });
+     }
+
+     chatSendButton.addEventListener('click', () => {
+         const message = chatInput.value.trim();
+         if (message) {
+             addChatMessage(message, 'sent');
+             chatInput.value = '';
+             // Simulate AI response
+             setTimeout(() => {
+                 addChatMessage("I'm looking into that for you...", 'received');
+             }, 1000);
+         }
+     });
+
+     chatInput.addEventListener('keypress', (e) => {
+         if (e.key === 'Enter' && !e.shiftKey) { // Send on Enter, allow Shift+Enter for newline
+             e.preventDefault(); // Prevent default Enter behavior (newline)
+             chatSendButton.click();
+         }
+     });
+     // **** END MODIFICATION ****
+
+  </script>
+</body>
+</html>
