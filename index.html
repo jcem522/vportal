@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Portal | Dubai Future Foundation</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- AOS (Animate On Scroll) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <!-- Lottie Player -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    
+    <style>
+        /* Custom Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        /* Hero section styles */
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), 
+                        url('https://www.dubaifuture.ae/wp-content/uploads/2022/11/DFF_Website_Home_Banner.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        /* Glassmorphism effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Card hover effects */
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Custom animation for the arrow */
+        @keyframes bounce-horizontal {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+        
+        .animate-bounce-x {
+            animation: bounce-horizontal 1s infinite;
+        }
+        
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(90deg, #2563eb, #3b82f6, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2563eb;
+        }
+        
+        /* Custom button styles */
+        .btn-primary {
+            @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg;
+        }
+        
+        .btn-secondary {
+            @apply bg-white hover:bg-gray-100 text-blue-600 font-semibold py-3 px-6 rounded-lg border border-blue-600 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg;
+        }
+        
+        /* Custom underline */
+        .custom-underline {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .custom-underline::after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            bottom: -5px;
+            left: 20%;
+            background-color: #3b82f6;
+            border-radius: 10px;
+        }
+        
+        /* Process step */
+        .process-step {
+            position: relative;
+        }
+        
+        .process-step::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -15px;
+            width: 30px;
+            height: 2px;
+            background-color: #3b82f6;
+            transform: translateY(-50%);
+        }
+        
+        .process-step:last-child::after {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="flex items-center">
+                            <span class="bg-blue-700 text-white px-3 py-2 rounded-lg text-xl font-bold mr-2">DFF</span>
+                            <span class="text-xl font-bold text-gray-800 hidden md:block">Vendor Portal</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="#resources" class="text-gray-600 hover:text-blue-700 px-3 py-2 rounded-md text-sm font-medium hidden md:block">Resources</a>
+                    <a href="#login-url" class="text-gray-600 hover:text-blue-700 px-3 py-2 rounded-md text-sm font-medium">Log In</a>
+                    <a href="#register-url" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition duration-300">Register Now</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+<header class="hero-section text-white bg-cover bg-center bg-no-repeat relative" style="background-image: url('./mainback.png');">
+    <!-- Optional dark overlay -->
+    <div class="absolute inset-0 bg-black/60"></div>
+
+    <!-- Main content -->
+    <div class="relative z-10 py-20 md:py-32 px-6 sm:px-8 max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="animate__animated animate__fadeInLeft">
+                <h1 class="text-4xl sm:text-5xl font-bold mb-6 leading-tight">
+                    Welcome to the Future of Vendor Collaboration
+                </h1>
+                <p class="text-lg sm:text-xl mb-8 text-gray-200 max-w-xl">
+                    Dubai Future Foundation's Vendor Portal – your secure, AI-powered, and future-ready platform for collaboration, compliance, and commerce.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#register-url" class="btn-primary flex items-center">
+                        Get Started
+                        <i class="fas fa-arrow-right ml-2 animate-bounce-x"></i>
+                    </a>
+                    <a href="#vendor-types" class="btn-secondary">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+
+            <div class="flex justify-center animate__animated animate__fadeInRight">
+                <div class="glass-card p-8 rounded-xl w-full max-w-md">
+                    <lottie-player
+                        src="https://assets7.lottiefiles.com/packages/lf20_puciaact.json"
+                        background="transparent"
+                        speed="1"
+                        style="width: 100%; height: 300px;"
+                        loop
+                        autoplay>
+                    </lottie-player>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+    <!-- Vendor Types Section -->
+    <section id="vendor-types" class="py-16 md:py-24" data-aos="fade-up">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    <span class="custom-underline gradient-text">Who Can Register?</span>
+                </h2>
+                <p class="text-gray-600 text-lg max-w-3xl mx-auto mb-8">
+                    The Dubai Future Foundation Vendor Portal offers distinct registration pathways tailored to different business relationships.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Vendor Type 1 -->
+                <div class="feature-card bg-white rounded-xl shadow-md p-8 border border-gray-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20">
+                        <div class="absolute transform rotate-45 bg-blue-600 text-center text-white font-semibold py-1 right-[-35px] top-[20px] w-[135px]">Type 1</div>
+                    </div>
+                    <div class="h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center mb-6 text-white">
+                        <i class="fas fa-building text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Companies</h3>
+                    <p class="text-gray-600 mb-4">Licensed businesses needing full access to procurement, invoicing, and contract tools.</p>
+                    <ul class="text-gray-600 space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Full procurement access</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Multiple user accounts</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Complete workflow access</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Vendor Type 2 -->
+                <div class="feature-card bg-white rounded-xl shadow-md p-8 border border-gray-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20">
+                        <div class="absolute transform rotate-45 bg-green-600 text-center text-white font-semibold py-1 right-[-35px] top-[20px] w-[135px]">Type 2</div>
+                    </div>
+                    <div class="h-16 w-16 bg-green-600 rounded-full flex items-center justify-center mb-6 text-white">
+                        <i class="fas fa-user text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Freelancers</h3>
+                    <p class="text-gray-600 mb-4">Individuals offering services via simplified registration, with access to financial tools.</p>
+                    <ul class="text-gray-600 space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Simplified onboarding</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Invoice submission tools</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Milestone tracking</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Vendor Type 3 -->
+                <div class="feature-card bg-white rounded-xl shadow-md p-8 border border-gray-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20">
+                        <div class="absolute transform rotate-45 bg-orange-600 text-center text-white font-semibold py-1 right-[-35px] top-[20px] w-[135px]">Type 3</div>
+                    </div>
+                    <div class="h-16 w-16 bg-orange-600 rounded-full flex items-center justify-center mb-6 text-white">
+                        <i class="fas fa-microphone text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Speakers</h3>
+                    <p class="text-gray-600 mb-4">Invited speakers for DFF events managing profiles and interactions.</p>
+                    <ul class="text-gray-600 space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Specialized profile tools</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Document management</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Payment processing</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Vendor Type 4 -->
+                <div class="feature-card bg-white rounded-xl shadow-md p-8 border border-gray-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20">
+                        <div class="absolute transform rotate-45 bg-purple-600 text-center text-white font-semibold py-1 right-[-35px] top-[20px] w-[135px]">Type 4</div>
+                    </div>
+                    <div class="h-16 w-16 bg-purple-600 rounded-full flex items-center justify-center mb-6 text-white">
+                        <i class="fas fa-award text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Grant Winners</h3>
+                    <p class="text-gray-600 mb-4">Entities or individuals managing grants and reporting milestones.</p>
+                    <ul class="text-gray-600 space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Project milestone tracking</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Progress reporting tools</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Grant management</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Vendor Type 5 -->
+                <div class="feature-card bg-white rounded-xl shadow-md p-8 border border-gray-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20">
+                        <div class="absolute transform rotate-45 bg-teal-600 text-center text-white font-semibold py-1 right-[-35px] top-[20px] w-[135px]">Type 5</div>
+                    </div>
+                    <div class="h-16 w-16 bg-teal-600 rounded-full flex items-center justify-center mb-6 text-white">
+                        <i class="fas fa-handshake text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Partners</h3>
+                    <p class="text-gray-600 mb-4">Organizations seeking strategic collaboration via a dedicated path.</p>
+                    <ul class="text-gray-600 space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Strategic collaboration tools</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Partnership dashboard</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Direct communication channels</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Process Section -->
+    <section id="process" class="py-16 md:py-24 bg-blue-50" data-aos="fade-up">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    <span class="custom-underline gradient-text">Registration Process</span>
+                </h2>
+                <p class="text-gray-600 text-lg max-w-3xl mx-auto">
+                    Our portal features a straightforward four-step process to get you started.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Process Step 1 -->
+                <div class="process-step bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                    <div class="h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center mb-6 text-white font-bold text-2xl">1</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Register</h3>
+                    <p class="text-gray-600">Create your account and complete your profile with the appropriate vendor type</p>
+                </div>
+
+                <!-- Process Step 2 -->
+                <div class="process-step bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                    <div class="h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center mb-6 text-white font-bold text-2xl">2</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Verify</h3>
+                    <p class="text-gray-600">Submit required documentation for verification and approval</p>
+                </div>
+
+                <!-- Process Step 3 -->
+                <div class="process-step bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                    <div class="h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center mb-6 text-white font-bold text-2xl">3</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Connect</h3>
+                    <p class="text-gray-600">Access tender invitations and business opportunities relevant to your profile</p>
+                </div>
+
+                <!-- Process Step 4 -->
+                <div class="process-step bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                    <div class="h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center mb-6 text-white font-bold text-2xl">4</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Collaborate</h3>
+                    <p class="text-gray-600">Manage the full lifecycle of your relationship including contracts, deliveries, invoices and payments</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resources Section -->
+    <section id="resources" class="py-16 md:py-24" data-aos="fade-up">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    <span class="custom-underline gradient-text">Public Policies & Resources</span>
+                </h2>
+                <p class="text-gray-600 text-lg max-w-3xl mx-auto">
+                    Access important documents and guidelines to help you navigate our vendor processes.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
+                <a href="#" class="feature-card bg-white hover:bg-gray-50 rounded-lg shadow-sm p-4 border border-gray-200 flex flex-col items-center text-center transition-colors">
+                    <i class="fas fa-file-alt text-blue-600 text-2xl mb-3"></i>
+                    <h3 class="text-sm font-medium text-gray-800">Vendor Registration Policy</h3>
+                </a>
+                
+                <a href="#" class="feature-card bg-white hover:bg-gray-50 rounded-lg shadow-sm p-4 border border-gray-200 flex flex-col items-center text-center transition-colors">
+                    <i class="fas fa-balance-scale text-blue-600 text-2xl mb-3"></i>
+                    <h3 class="text-sm font-medium text-gray-800">Procurement Code of Conduct</h3>
+                </a>
+                
+                <a href="#" class="feature-card bg-white hover:bg-gray-50 rounded-lg shadow-sm p-4 border border-gray-200 flex flex-col items-center text-center transition-colors">
+                    <i class="fas fa-shield-alt text-blue-600 text-2xl mb-3"></i>
+                    <h3 class="text-sm font-medium text-gray-800">Privacy & Data Security</h3>
+                </a>
+                
+                <a href="#" class="feature-card bg-white hover:bg-gray-50 rounded-lg shadow-sm p-4 border border-gray-200 flex flex-col items-center text-center transition-colors">
+                    <i class="fas fa-handshake text-blue-600 text-2xl mb-3"></i>
+                    <h3 class="text-sm font-medium text-gray-800">Partnership Guidelines</h3>
+                </a>
+                
+                <a href="#" class="feature-card bg-white hover:bg-gray-50 rounded-lg shadow-sm p-4 border border-gray-200 flex flex-col items-center text-center transition-colors">
+                    <i class="fas fa-question-circle text-blue-600 text-2xl mb-3"></i>
+                    <h3 class="text-sm font-medium text-gray-800">FAQ / Help Center</h3>
+                </a>
+                
+                <a href="#" class="feature-card bg-white hover:bg-gray-50 rounded-lg shadow-sm p-4 border border-gray-200 flex flex-col items-center text-center transition-colors">
+                    <i class="fas fa-file-signature text-blue-600 text-2xl mb-3"></i>
+                    <h3 class="text-sm font-medium text-gray-800">NDA Templates</h3>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="register" class="py-16 mb-16" data-aos="fade-up">
+        <div class="max-w-4xl mx-auto px-6 bg-white rounded-xl shadow-lg p-10 border border-gray-100">
+            <div class="text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Start Your Journey</h2>
+                <p class="text-gray-600 text-lg max-w-3xl mx-auto mb-8">
+                    Ready to collaborate? Log in if you already have an account, or register now to begin the onboarding process.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="#login-url" class="btn-secondary w-full sm:w-auto flex justify-center">
+                        Log In
+                    </a>
+                    <a href="#register-url" class="btn-primary w-full sm:w-auto flex items-center justify-center">
+                        Register Now
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-blue-900 text-gray-300 py-8 text-center text-sm">
+        <div class="max-w-7xl mx-auto px-6">
+            <p>© 2025 Dubai Future Foundation. All rights reserved.</p>
+            <div class="mt-4 flex justify-center space-x-6">
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">Privacy Policy</a>
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">Terms of Service</a>
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Initialize AOS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true
+            });
+        });
+    </script>
+</body>
+</html>
