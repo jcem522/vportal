@@ -1,0 +1,1339 @@
+            <div id="user-management" class="tab-pane">
+                 <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 transition-colors">
+                     <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Manage Portal Users</h2>
+                        <button id="inviteUserButton" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md flex items-center text-sm">
+                            <i class="fas fa-plus mr-2"></i> Invite New User
+                        </button>
+                    </div>
+                    
+                    <!-- Hidden User Invitation Form -->
+                    <form id="inviteUserForm" class="hidden bg-gray-50 dark:bg-gray-700 p-5 rounded-lg mb-6 border border-gray-200 dark:border-gray-600">
+                        <h3 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-4">Invite New Portal User</h3>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="invite-fname" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">First Name *</label>
+                                    <input type="text" id="invite-fname" class="form-input block w-full" required>
+                                </div>
+                                <div>
+                                    <label for="invite-lname" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Last Name *</label>
+                                    <input type="text" id="invite-lname" class="form-input block w-full" required>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="invite-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address *</label>
+                                <input type="email" id="invite-email" class="form-input block w-full" required>
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">This email will receive the invitation link</p>
+                            </div>
+                            <div>
+                                <label for="invite-jobtitle" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Job Title</label>
+                                <input type="text" id="invite-jobtitle" class="form-input block w-full">
+                            </div>
+                            <div>
+                                <label for="invite-role" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Portal Role *</label>
+                                <select id="invite-role" class="form-select block w-full" required>
+                                    <option value="">Select a role</option>
+                                    <option value="finance">Finance</option>
+                                    <option value="delivery">Delivery Contact</option>
+                                    <option value="sales">Sales & Account Management</option>
+                                    <option value="admin">Administrator</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">This determines the user's permissions in the portal</p>
+                            </div>
+                            <div class="border-t border-gray-200 dark:border-gray-600 pt-4 flex justify-end space-x-3">
+                                <button id="cancelInviteButton" type="button" class="inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300">Cancel</button>
+                                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">Send Invitation</button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <!-- User Management Info Alert -->
+                    <div class="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-info-circle text-blue-600 dark:text-blue-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-blue-800 dark:text-blue-200">About User Management</h3>
+                                <div class="mt-2 text-sm text-blue-700 dark:text-blue-300">
+                                    <p>Adding new users requires approval from our team. Users will be invited via email once approved. Each user can be assigned specific roles that determine their access level within the portal.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                             <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Role(s)</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Last Login</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                             <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800/50 dark:divide-gray-700">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                                        Admin User (You) <span class="text-xs text-gray-500 dark:text-gray-400">(Primary)</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        admin@acme-corp.ae
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        Administrator, Finance
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        <span class="status-badge status-active">Active</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        Just now
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                         <button class="action-button" title="Edit Roles (Requires another Admin)" disabled><i class="fas fa-user-edit opacity-50"></i></button>
+                                         <button class="action-button" title="Cannot deactivate primary admin" disabled><i class="fas fa-user-slash opacity-50"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                                        Finance User One
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        finance1@acme-corp.ae
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        Finance
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                         <span class="status-badge status-active">Active</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        Apr 8, 2025
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="action-button" title="Edit Roles" onclick="showEditRoleModal('Finance User One')"><i class="fas fa-user-edit"></i></button>
+                                        <button class="action-button danger" title="Deactivate User" onclick="showDeactivateModal('Finance User One')"><i class="fas fa-user-slash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                                        Sarah Johnson
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        sarah.j@acme-corp.ae
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        Sales
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                         <span class="status-badge status-active">Active</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        Apr 5, 2025
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="action-button" title="Edit Roles" onclick="showEditRoleModal('Sarah Johnson')"><i class="fas fa-user-edit"></i></button>
+                                        <button class="action-button danger" title="Deactivate User" onclick="showDeactivateModal('Sarah Johnson')"><i class="fas fa-user-slash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                                        (Pending Invitation)
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        delivery.contact@acme-corp.ae
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        Delivery Contact
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                         <span class="status-badge status-pending">Pending</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        -
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="action-button" title="Resend Invitation" onclick="resendInvitation('delivery.contact@acme-corp.ae')"><i class="fas fa-envelope"></i></button>
+                                        <button class="action-button danger" title="Cancel Invitation" onclick="cancelInvitation('delivery.contact@acme-corp.ae')"><i class="fas fa-trash-alt"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                                        Michael Chen
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        m.chen@acme-corp.ae
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        Delivery Contact
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                         <span class="status-badge status-inactive">Inactive</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        Mar 12, 2025
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="action-button" title="Reactivate User" onclick="reactivateUser('Michael Chen')"><i class="fas fa-user-check"></i></button>
+                                    </td>
+                                </tr>
+                             </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- User Activity Audit Log -->
+                    <div class="mt-8">
+                        <h3 class="text-md font-semibold text-gray-700 dark:text-gray-300 mb-3 border-b border-gray-200 dark:border-gray-700 pb-1">User Activity Log</h3>
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <div class="space-y-3">
+                                <div class="flex">
+                                    <div class="flex-shrink-0 text-blue-500 dark:text-blue-400 mr-3">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-300">User <span class="font-medium">Sarah Johnson</span> added by <span class="font-medium">Admin User</span></p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Apr 2, 2025 • 09:32 AM</p>
+                                    </div>
+                                </div>
+                                <div class="flex">
+                                    <div class="flex-shrink-0 text-green-500 dark:text-green-400 mr-3">
+                                        <i class="fas fa-user-shield"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-300">Role for <span class="font-medium">Finance User One</span> changed from <span class="font-medium">Viewer</span> to <span class="font-medium">Finance</span></p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Mar 28, 2025 • 11:45 AM</p>
+                                    </div>
+                                </div>
+                                <div class="flex">
+                                    <div class="flex-shrink-0 text-red-500 dark:text-red-400 mr-3">
+                                        <i class="fas fa-user-slash"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-300">User <span class="font-medium">Michael Chen</span> deactivated by <span class="font-medium">Admin User</span></p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Mar 15, 2025 • 03:21 PM</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-center">
+                                <button type="button" class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">View Full Audit Log</button>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+        </div>
+
+        <div class="mt-8 py-4 bg-gray-100 dark:bg-gray-900 sticky bottom-0 border-t border-gray-200 dark:border-gray-700 z-10">
+            <div class="max-w-7xl mx-auto flex justify-end px-4 sm:px-6 lg:px-8">
+                 <button type="button" id="global-submit-profile" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50" disabled>
+                     <i class="fas fa-cloud-upload-alt mr-2"></i>
+                     Submit Profile Updates for Approval
+                 </button>
+            </div>
+             <p id="change-info" class="text-xs text-center text-gray-500 dark:text-gray-400 mt-2 hidden">You have unsubmitted changes. Submit them for approval.</p>
+        </div><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Profile - Company/Organization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* --- Styles copied/derived from profileupdatetype2-v3 - Copy.txt & previous examples --- */
+        body { background-color: #f3f4f6; /* Use a slightly different bg for profile page */ }
+        .dark body { background-color: #111827; }
+        /* Base Styles */
+        .notification-badge { position: absolute; top: -5px; right: -5px; }
+        /* Dark mode classes */
+        .dark { color-scheme: dark; }
+        .dark .bg-white { background-color: #1f2937; }
+        .dark .text-gray-900 { color: #f9fafb; }
+        .dark .text-gray-800 { color: #f3f4f6; } /* Added for consistency */
+        .dark .text-gray-700 { color: #e5e7eb; }
+        .dark .text-gray-600 { color: #d1d5db; }
+        .dark .text-gray-500 { color: #9ca3af; }
+        .dark .text-gray-400 { color: #9ca3af; } /* Added for consistency */
+        .dark .text-gray-300 { color: #d1d5db; } /* Added for consistency */
+        .dark .text-gray-200 { color: #e5e7eb; } /* Added for consistency */
+        .dark .border-gray-200 { border-color: #374151; }
+        .dark .border-gray-300 { border-color: #4b5563; }
+        .dark .border-gray-600 { border-color: #4b5563; }
+        .dark .border-gray-700 { border-color: #374151; }
+        .dark .shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2); }
+        .dark .divide-gray-200 > * { border-color: #374151; }
+        .dark .bg-gray-100 { background-color: #1f2937; } /* Adjusted */
+        .dark .bg-gray-50 { background-color: #374151; } /* Adjusted */
+        /* Transitions */
+        .transition-colors { transition-property: background-color, border-color, color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+        .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+
+        /* --- Tab Styling (Consistent with previous) --- */
+        .tab-button { padding: 0.75rem 1rem; margin-right: 0.5rem; border-radius: 0.375rem 0.375rem 0 0; font-weight: 500; color: #6b7280; border: 1px solid transparent; border-bottom: none; cursor: pointer; transition: all 0.2s ease; }
+        .tab-button.active { color: #1d4ed8; background-color: #ffffff; border-color: #e5e7eb; border-bottom-color: #ffffff; margin-bottom: -1px; }
+        .tab-button:not(.active):hover { color: #374151; background-color: #f9fafb; }
+        .dark .tab-button { color: #9ca3af; }
+        .dark .tab-button.active { color: #93c5fd; background-color: #1f2937; border-color: #374151; border-bottom-color: #1f2937; }
+        .dark .tab-button:not(.active):hover { color: #e5e7eb; background-color: #374151; }
+        .tab-pane { display: none; animation: fadeIn 0.5s; }
+        .tab-pane.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Input / Form Styling */
+        input:disabled, textarea:disabled, select:disabled { background-color: #f3f4f6; cursor: not-allowed; opacity: 0.7; }
+        .dark input:disabled, .dark textarea:disabled, .dark select:disabled { background-color: #374151; opacity: 0.6; }
+        label > .required-asterisk::after { content: ' *'; color: #ef4444; }
+        .form-input, .form-select, .form-textarea { /* Common form control styles */
+             display: block; width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; box-shadow: sm; font-size: 0.875rem; line-height: 1.25rem; background-color: #ffffff; color: #111827;
+             transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3); }
+        .dark .form-input, .dark .form-select, .dark .form-textarea { background-color: #374151; border-color: #4b5563; color: #f3f4f6; }
+        .dark .form-input:focus, .dark .form-select:focus, .dark .form-textarea:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4); }
+        .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2372787e' d='M6 8.825L1.763 4.5 2.875 3.372 6 6.572 9.125 3.372 10.237 4.5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; }
+        .dark .form-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239ca3af' d='M6 8.825L1.763 4.5 2.875 3.372 6 6.572 9.125 3.372 10.237 4.5z'/%3E%3C/svg%3E");}
+
+        /* Action button styling */
+        .action-button { background: none; border: none; padding: 0.25rem 0.5rem; margin: 0 0.2rem; cursor: pointer; color: #6b7280; transition: color 0.2s ease; border-radius: 0.25rem; }
+        .action-button:hover { color: #1d4ed8; background-color: #eff6ff; }
+        .action-button.danger:hover { color: #dc2626; background-color: #fee2e2; }
+        .dark .action-button { color: #9ca3af; }
+        .dark .action-button:hover { color: #93c5fd; background-color: #1e3a8a; }
+        .dark .action-button.danger:hover { color: #f87171; background-color: #7f1d1d; }
+
+        /* Status badge styling */
+         .status-badge { display: inline-block; padding: 0.2em 0.6em; font-size: 0.75rem; font-weight: 600; border-radius: 0.25rem; line-height: 1; }
+         .status-active { background-color: #d1fae5; color: #065f46; }
+         .status-inactive { background-color: #f3f4f6; color: #4b5563; }
+         .status-pending { background-color: #fef3c7; color: #92400e; }
+         .dark .status-active { background-color: #064e3b; color: #a7f3d0; }
+         .dark .status-inactive { background-color: #374151; color: #d1d5db; }
+         .dark .status-pending { background-color: #78350f; color: #fde68a; }
+
+         /* Service Category Styling */
+         .category-group { margin-bottom: 1rem; }
+         .category-title { font-weight: 600; margin-bottom: 0.5rem; }
+         .subcategory-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5rem; margin-left: 1rem; }
+         .checkbox-label { display: flex; align-items: center; }
+         .checkbox-input { margin-right: 0.5rem; }
+         .edit-services-button { margin-top: 1rem; }
+
+         /* File Upload Display */
+        .file-upload-display { font-size: 0.875rem; color: #4b5563; }
+        .dark .file-upload-display { color: #d1d5db; }
+        .file-upload-display a { color: #2563eb; text-decoration: underline;}
+        .dark .file-upload-display a { color: #60a5fa; }
+        .document-history-item { background-color: #f9fafb; opacity: 0.8; }
+        .dark .document-history-item { background-color: #374151;}
+
+        /* Sidebar styling from landing page */
+        .sidebar {
+          width: 250px;
+          transition: width 0.3s ease;
+        }
+        .sidebar.collapsed {
+          width: 70px;
+        }
+        .sidebar-icon {
+          min-width: 24px;
+        }
+        .sidebar-label {
+            transition: opacity 0.3s ease;
+        }
+        .sidebar.collapsed .sidebar-label {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .sidebar.collapsed .ml-3 {
+            margin-left: 0;
+        }
+        .sidebar.collapsed .justify-between {
+            justify-content: center;
+        }
+         .sidebar.collapsed .w-full {
+            width: auto;
+        }
+
+        /* Chat Modal Styling */
+        .chat-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .chat-modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .chat-window {
+          width: 370px;
+          max-height: 80vh;
+          background-color: white;
+          border-radius: 12px;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          transform: scale(0.95);
+          transition: transform 0.3s ease;
+        }
+        .chat-modal-overlay.open .chat-window {
+            transform: scale(1);
+        }
+        .dark .chat-window {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+        }
+        .chat-header {
+          background-color: #f3f4f6;
+          padding: 12px 16px;
+          font-weight: 600;
+          border-bottom: 1px solid #e5e7eb;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-shrink: 0;
+        }
+        .dark .chat-header {
+            background-color: #374151;
+            border-bottom-color: #4b5563;
+        }
+        .chat-body {
+          flex-grow: 1;
+          padding: 16px;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .chat-message {
+            padding: 8px 12px;
+            border-radius: 10px;
+            max-width: 80%;
+            word-wrap: break-word;
+            font-size: 0.875rem;
+        }
+        .chat-message.sent {
+            background-color: #dbeafe;
+            color: #1e40af;
+            align-self: flex-end;
+            border-bottom-right-radius: 0;
+        }
+        .dark .chat-message.sent {
+            background-color: #2563eb;
+            color: #ffffff;
+        }
+        .chat-message.received {
+            background-color: #e5e7eb;
+            color: #1f2937;
+            align-self: flex-start;
+            border-bottom-left-radius: 0;
+        }
+        .dark .chat-message.received {
+            background-color: #4b5563;
+            color: #f3f4f6;
+        }
+        .chat-footer {
+          padding: 12px;
+          border-top: 1px solid #e5e7eb;
+          display: flex;
+          gap: 8px;
+          flex-shrink: 0;
+        }
+         .dark .chat-footer {
+             border-top-color: #4b5563;
+         }
+        .chat-input {
+          flex-grow: 1;
+          border: 1px solid #d1d5db;
+          border-radius: 6px;
+          padding: 8px 12px;
+          font-size: 14px;
+        }
+        .dark .chat-input {
+            background-color: #374151;
+            border-color: #6b7280;
+            color: #f3f4f6;
+        }
+        .chat-send-button {
+          background-color: #2563eb;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          padding: 8px 12px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+          flex-shrink: 0;
+        }
+         .chat-send-button:hover {
+           background-color: #1d4ed8;
+         }
+  </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 transition-colors">
+  <div class="min-h-screen flex">
+    <!-- Left sidebar from landing page -->
+    <aside id="sidebar" class="sidebar bg-white shadow h-screen sticky top-0 z-20 transition-colors">
+      <div class="flex flex-col h-full">
+        <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+          <div class="flex items-center">
+            <img src="/api/placeholder/40/40" alt="Logo" class="h-8 w-8">
+            <h1 class="ml-3 text-xl font-bold text-gray-900 sidebar-label">Vendor Portal</h1>
+          </div>
+          <button id="toggleSidebar" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+
+        <nav class="flex-grow py-4 overflow-y-auto">
+          <ul class="space-y-1">
+            <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg mx-2">
+                <i class="fas fa-home sidebar-icon text-xl"></i>
+                <span class="ml-3 sidebar-label">Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center px-4 py-3 text-blue-600 bg-blue-50 rounded-lg mx-2">
+                <i class="fas fa-user-circle sidebar-icon text-xl"></i>
+                <span class="ml-3 sidebar-label">Profile</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg mx-2">
+                <i class="fas fa-gavel sidebar-icon text-xl"></i>
+                <span class="ml-3 sidebar-label">Tenders</span>
+              </a>
+            </li>
+             <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg mx-2">
+                <i class="fas fa-file-contract sidebar-icon text-xl"></i>
+                <span class="ml-3 sidebar-label">POs & Contracts</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg mx-2">
+                <i class="fas fa-file-invoice-dollar sidebar-icon text-xl"></i>
+                <span class="ml-3 sidebar-label">Invoices</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg mx-2">
+                <i class="fas fa-truck sidebar-icon text-xl"></i>
+                <span class="ml-3 sidebar-label">Deliveries</span>
+              </a>
+            </li>
+             <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg mx-2">
+                <i class="fas fa-life-ring sidebar-icon text-xl"></i>
+                <span class="ml-3 sidebar-label">Support Center</span>
+              </a>
+            </li>
+             <li>
+              <button id="openChatModalButton" class="w-full flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg mx-2">
+                <i class="fas fa-comments sidebar-icon text-xl"></i>
+                <span class="ml-3 sidebar-label">Live Chat</span>
+              </button>
+            </li>
+             <li>
+              <a href="#" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg mx-2">
+                <i class="fas fa-cog sidebar-icon text-xl"></i>
+                <span class="ml-3 sidebar-label">Settings</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="p-4 border-t border-gray-200 mt-auto">
+          <button class="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-2 px-4 flex items-center justify-center">
+            <i class="fas fa-plus mr-2 sidebar-icon"></i>
+            <span class="sidebar-label">Create New</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Content area with top header -->
+    <div class="flex-grow flex flex-col">
+      <!-- Header/top ribbon from landing page -->
+      <header class="bg-white shadow z-10 transition-colors">
+        <div class="px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <button class="md:hidden text-gray-500 hover:text-gray-700 mr-2">
+              <i class="fas fa-bars"></i>
+            </button>
+            <h2 class="text-xl font-bold text-gray-900">Profile</h2>
+          </div>
+          <div class="flex items-center space-x-4">
+            <button id="darkModeToggle" class="text-gray-500 hover:text-gray-700">
+              <i class="fas fa-moon text-xl"></i>
+            </button>
+            <div class="relative">
+              <button class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-bell text-xl"></i>
+                <span class="notification-badge flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">5</span>
+              </button>
+            </div>
+            <div class="hidden md:flex items-center bg-gray-100 rounded-lg px-3 py-1 dark:bg-gray-700">
+              <i class="fas fa-search text-gray-500 mr-2"></i>
+              <input type="text" placeholder="Search..." class="bg-transparent border-none focus:outline-none text-sm text-gray-700 dark:text-gray-300">
+            </div>
+            <div class="flex items-center space-x-2">
+              <img src="/api/placeholder/32/32" alt="User Avatar" class="h-8 w-8 rounded-full">
+              <div class="hidden md:block">
+                <p class="text-sm font-medium text-gray-700">Khaled Essam</p>
+                <p class="text-xs text-gray-500">Vendor Admin</p>
+              </div>
+              <button class="text-gray-500">
+                <i class="fas fa-chevron-down"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main content area -->
+      <main class="flex-grow p-4 sm:p-6 lg:p-8 overflow-auto">
+        <div class="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow p-6 transition-colors">
+            <div class="flex flex-wrap justify-between items-center mb-4">
+                <h2 class="text-lg md:text-xl font-bold text-gray-900 dark:text-gray-100">Profile: ACME Corp (VEN-COMPANY-123)</h2>
+                <div>
+                    <span class="text-sm text-gray-500 dark:text-gray-400 mr-4">Vendor Type: Company/Organization</span>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">Account Status: <span class="font-medium text-green-600 dark:text-green-400">Active</span></span>
+                </div>
+            </div>
+            <div class="mb-4 p-4 rounded-lg bg-green-100 dark:bg-green-900 border border-green-200 dark:border-green-700 flex items-center">
+                 <i class="fas fa-check-circle text-green-600 dark:text-green-400 text-xl mr-3"></i>
+                <div><h3 class="font-semibold text-green-800 dark:text-green-200">Profile Verified</h3><p class="text-sm text-green-700 dark:text-green-300">Your company profile information is up-to-date and verified.</p></div>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Last Profile Update Submitted: March 1, 2025 11:00 AM</p>
+        </div>
+
+        <div class="mb-6 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-gray-100 dark:bg-gray-900 z-10 py-2">
+            <nav class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
+                <button class="tab-button active whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm" data-tab="company-details">Company Details</button>
+                <button class="tab-button whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:border-gray-600" data-tab="address-info">Address</button>
+                <button class="tab-button whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:border-gray-600" data-tab="services">Services</button>
+                <button class="tab-button whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:border-gray-600" data-tab="banking-details">Banking Details</button>
+                <button class="tab-button whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:border-gray-600" data-tab="documents">Documents & Agreements</button>
+                <button class="tab-button whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:border-gray-600" data-tab="user-management">User Management</button>
+            </nav>
+        </div>
+
+        {/* --- TAB CONTENT START --- */}
+        <div id="tab-content">
+
+            {/* --- Company Details Tab --- */}
+            <div id="company-details" class="tab-pane active">
+                 <form class="company-details-form bg-white dark:bg-gray-800 shadow rounded-lg p-6 space-y-6 transition-colors">
+                     <div class="flex justify-between items-center"><h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">Company Information</h3><button type="button" class="btn-edit inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"><i class="fas fa-pencil-alt mr-2"></i>Edit Details</button></div>
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div><label for="comp-legal-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 required-asterisk">Legal Company Name</label><input type="text" id="comp-legal-name" name="LegalName" value="ACME Corporation" class="form-input mt-1 block w-full" required disabled></div>
+                        <div><label for="comp-trade-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Trade Name (DBA)</label><input type="text" id="comp-trade-name" name="TradeName" value="ACME Trading" class="form-input mt-1 block w-full" disabled></div>
+                        <div><label for="comp-tax-id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 required-asterisk">Tax ID (TRN)</label><input type="text" id="comp-tax-id" name="TaxID" value="100XXXXXXX" class="form-input mt-1 block w-full" required disabled></div>
+                        <div><label for="comp-reg-country" class="block text-sm font-medium text-gray-700 dark:text-gray-300 required-asterisk">Country of Registration</label><select id="comp-reg-country" name="RegistrationCountryCode" class="form-select mt-1 block w-full" required disabled><option value="AE" selected>United Arab Emirates</option></select></div>
+                        <div><label for="comp-license-num" class="block text-sm font-medium text-gray-700 dark:text-gray-300 required-asterisk">Trade License Number</label><input type="text" id="comp-license-num" name="TradeLicenseNumber" value="CN-1234567" class="form-input mt-1 block w-full" required disabled></div>
+                        <div><label for="comp-license-expiry" class="block text-sm font-medium text-gray-700 dark:text-gray-300 required-asterisk">License Expiry Date</label><input type="date" id="comp-license-expiry" name="TradeLicenseExpiryDate" value="2026-12-31" class="form-input mt-1 block w-full" required disabled></div>
+                        <div class="md:col-span-2"><label for="comp-description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Company Description</label><textarea id="comp-description" name="CompanyDescription" rows="3" class="form-textarea mt-1 block w-full" disabled>Leading provider of innovative solutions in the region.</textarea></div>
+                     </div>
+                     <div class="flex justify-end space-x-3 pt-4 hidden edit-actions"><button type="button" class="btn-cancel inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300">Cancel Changes</button><button type="button" class="btn-save-local inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">Confirm Changes</button></div>
+                 </form>
+            </div>
+
+            <div id="address-info" class="tab-pane">
+                 <form class="address-info-form bg-white dark:bg-gray-800 shadow rounded-lg p-6 space-y-6 transition-colors">
+                     <div class="flex justify-between items-center"><h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">Registered Business Address</h3><button type="button" class="btn-edit inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"><i class="fas fa-pencil-alt mr-2"></i>Edit Address</button></div>
+                    <div><label for="reg-addr-1" class="block text-sm font-medium text-gray-700 dark:text-gray-300 required-asterisk">Address Line 1</label><input type="text" id="reg-addr-1" name="RegisteredAddressLine1" value="Office 101, ACME Tower" class="form-input mt-1 block w-full" required disabled></div>
+                    <div><label for="reg-addr-2" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Address Line 2</label><input type="text" id="reg-addr-2" name="RegisteredAddressLine2" value="Business District" class="form-input mt-1 block w-full" disabled></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div><label for="reg-city" class="block text-sm font-medium text-gray-700 dark:text-gray-300 required-asterisk">City</label><input type="text" id="reg-city" name="RegisteredCity" value="Dubai" class="form-input mt-1 block w-full" required disabled></div>
+                        <div><label for="reg-state" class="block text-sm font-medium text-gray-700 dark:text-gray-300">State/Province/Emirate</label><input type="text" id="reg-state" name="RegisteredStateProvince" value="Dubai" class="form-input mt-1 block w-full" disabled></div>
+                        <div><label for="reg-postal" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Postal Code</label><input type="text" id="reg-postal" name="RegisteredPostalCode" value="12345" class="form-input mt-1 block w-full" disabled></div>
+                        <div><label for="reg-country" class="block text-sm font-medium text-gray-700 dark:text-gray-300 required-asterisk">Country</label><select id="reg-country" name="RegisteredCountryCode" class="form-select mt-1 block w-full" required disabled><option value="AE" selected>United Arab Emirates</option></select></div>
+                    </div>
+                     <div class="flex justify-end space-x-3 pt-4 hidden edit-actions"><button type="button" class="btn-cancel inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300">Cancel Changes</button><button type="button" class="btn-save-local inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">Confirm Address Changes</button></div>
+                 </form>
+            </div>
+
+            <div id="services" class="tab-pane">
+                 <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 space-y-6 transition-colors">
+                     <div class="flex justify-between items-center"><h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">Services Offered</h3><button type="button" class="btn-edit inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"><i class="fas fa-pencil-alt mr-2"></i>Edit Services</button></div>
+                     <p class="text-sm text-gray-600 dark:text-gray-400 -mt-4">Manage the categories of goods and services your company provides.</p>
+
+                     <div id="service-display-view">
+                         <div class="category-group">
+                             <h4 class="category-title">Information Technology</h4>
+                             <div class="subcategory-list">
+                                 <span class="checkbox-label"><i class="fas fa-check-square text-blue-600 dark:text-blue-400 mr-2"></i> Software Development</span>
+                                 <span class="checkbox-label"><i class="fas fa-check-square text-blue-600 dark:text-blue-400 mr-2"></i> IT Consulting</span>
+                             </div>
+                         </div>
+                         <div class="category-group">
+                              <h4 class="category-title">Marketing & Communications</h4>
+                             <div class="subcategory-list">
+                                 <span class="checkbox-label"><i class="fas fa-check-square text-blue-600 dark:text-blue-400 mr-2"></i> Branding & Design</span>
+                             </div>
+                         </div>
+                     </div>
+
+                     <form class="service-edit-form hidden space-y-6">
+                         <p class="text-sm text-gray-600 dark:text-gray-400">Select all applicable service categories:</p>
+                         <div class="category-group">
+                             <h3 class="category-title">Information Technology</h3>
+                             <div class="subcategory-list">
+                                 <label class="checkbox-label"><input type="checkbox" class="checkbox-input" name="services[]" value="it_software" checked> Software Development</label>
+                                 <label class="checkbox-label"><input type="checkbox" class="checkbox-input" name="services[]" value="it_consulting" checked> IT Consulting</label>
+                                 <label class="checkbox-label"><input type="checkbox" class="checkbox-input" name="services[]" value="it_infra"> Infrastructure Support</label>
+                                 <label class="checkbox-label"><input type="checkbox" class="checkbox-input" name="services[]" value="it_hardware"> Hardware Supply</label>
+                                 <label class="checkbox-label"><input type="checkbox" class="checkbox-input" name="services[]" value="it_security"> Cybersecurity Services</label>
+                             </div>
+                         </div>
+                         <div class="category-group">
+                             <h3 class="category-title">Marketing & Communications</h3>
+                             <div class="subcategory-list">
+                                 <label class="checkbox-label"><input type="checkbox" class="checkbox-input" name="services[]" value="mkt_digital"> Digital Marketing</label>
+                                 <label class="checkbox-label"><input type="checkbox" class="checkbox-input" name="services[]" value="mkt_pr"> Public Relations</label>
+                                 <label class="checkbox-label"><input type="checkbox" class="checkbox-input" name="services[]" value="mkt_branding" checked> Branding & Design</label>
+                                 <label class="checkbox-label"><input type="checkbox" class="checkbox-input" name="services[]" value="mkt_events"> Event Management</label>
+                                 <label class="checkbox-label"><input type="checkbox" class="checkbox-input" name="services[]" value="mkt_content"> Content Creation</label>
+                             </div>
+                         </div>
+                         <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700 edit-actions"><button type="button" class="btn-cancel inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300">Cancel Changes</button><button type="button" class="btn-save-local inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">Confirm Service Changes</button></div>
+                     </form>
+                 </div>
+            </div>
+
+            <div id="banking-details" class="tab-pane">
+                <form class="banking-details-form bg-white dark:bg-gray-800 shadow rounded-lg p-6 space-y-6 transition-colors">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">Primary Banking Information</h3>
+                        <button type="button" class="btn-edit inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"><i class="fas fa-pencil-alt mr-2"></i>Edit Banking Details</button>
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 -mt-4">This is the primary account used for payments. Changes require verification and approval.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-gray-200 dark:border-gray-700 pt-6">
+                         <div><label for="bank-name-c" class="block text-sm font-medium text-gray-700 dark:text-gray-300 required-asterisk">Bank Name</label><input type="text" id="bank-name-c" name="BankName" value="Example Corp Bank" class="form-input mt-1 block w-full" required disabled></div>
+                        <div><label for="bank-acc-holder-c" class="block text-sm font-medium text-gray-700 dark:text-gray-300 required-asterisk">Account Holder Name</label><input type="text" id="bank-acc-holder-c" name="AccountHolderName" placeholder="Must match Legal Name" value="ACME Corporation" class="form-input mt-1 block w-full" required disabled></div>
+                        <div><label for="bank-acc-num-c" class="block text-sm font-medium text-gray-700 dark:text-gray-300 required-asterisk">Account Number</label><input type="text" id="bank-acc-num-c" name="AccountNumber" value="AE08..." class="form-input mt-1 block w-full" required disabled></div>
+                        <div><label for="bank-iban-c" class="block text-sm font-medium text-gray-700 dark:text-gray-300 required-asterisk">IBAN</label><input type="text" id="bank-iban-c" name="IBAN" value="AE08..." class="form-input mt-1 block w-full" required disabled></div>
+                        <div><label for="bank-swift-c" class="block text-sm font-medium text-gray-700 dark:text-gray-300 required-asterisk">Swift/BIC Code</label><input type="text" id="bank-swift-c" name="SwiftBICCode" value="BANKAEADXXX" class="form-input mt-1 block w-full" required disabled></div>
+                        <div><label for="bank-currency-c" class="block text-sm font-medium text-gray-700 dark:text-gray-300 required-asterisk">Account Currency</label><select id="bank-currency-c" name="AccountCurrencyCode" class="form-select mt-1 block w-full" required disabled><option value="AED" selected>AED - UAE Dirham</option></select></div>
+                    </div>
+                     <fieldset class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                         <legend class="text-base font-medium text-gray-900 dark:text-gray-100 mb-4">Bank Address</legend>
+                     </fieldset>
+                      <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                        <label class="block text-base font-medium text-gray-900 dark:text-gray-100 mb-2">Bank Account Verification Document</label>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Upload proof of account ownership (e.g., bank statement, letter). Uploading a new file requires approval.</p>
+                        <div id="current-bank-proof-c" class="mb-3 file-upload-display">
+                             <i class="fas fa-file-pdf mr-2 text-red-500"></i>
+                              <a href="#" target="_blank" title="View current proof">BankLetter_ACME_Corp.pdf</a>
+                              <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">(Uploaded: Feb 10, 2025)</span>
+                        </div>
+                        <div>
+                           <label for="bank-proof-upload-c" class="sr-only">Upload new bank proof</label>
+                           <input type="file" id="bank-proof-upload-c" name="BankProofFile" class="form-input block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 dark:file:bg-blue-900 file:text-blue-700 dark:file:text-blue-300 hover:file:bg-blue-100 dark:hover:file:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                           <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Allowed: PDF, JPG, PNG. Max 5MB.</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4 hidden edit-actions"> <button type="button" class="btn-cancel inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300">Cancel Changes</button> <button type="button" class="btn-save-local inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">Confirm Banking Changes</button> </div>
+                </form>
+            </div>
+
+             {/* --- Documents & Agreements Tab --- */}
+            <div id="documents" class="tab-pane">
+                 {/* Content similar to Type 2 Documents Tab, adjusted for company */}
+                 <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 transition-colors">
+                     <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">Documents & Agreements</h3><button type="button" class="btn-upload-doc inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50" disabled>
+                     <i class="fas fa-cloud-upload-alt mr-2"></i>
+                     Submit Profile Updates for Approval
+                 </button>
+            </div>
+             <p id="change-info" class="text-xs text-center text-gray-500 dark:text-gray-400 mt-2 hidden">You have unsubmitted changes. Submit them for approval.</p>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Chat Modal Overlay (From Landing Page) -->
+  <div id="chatModalOverlay" class="chat-modal-overlay">
+    <div id="chatWindow" class="chat-window transition-colors">
+        <div class="chat-header">
+            <span class="text-gray-900 dark:text-gray-100">Live Support</span>
+            <button id="closeChatModalButton" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                 <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="chat-message received">Hi there! How can I help with your company profile today?</div>
+            <div class="chat-message sent">I need help updating our trade license details.</div>
+            <div class="chat-message received">I'd be happy to help you with that. You can update your trade license in the "Company Details" tab by clicking the "Edit Details" button.</div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="chatInput" class="chat-input" placeholder="Type your message...">
+            <button id="chatSendButton" class="chat-send-button">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+  </div>
+
+  <script>
+     // Combined Javascript logic (Tab switching, Edit/Save/Cancel per form, Global Submit enable/disable)
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        const globalSubmitButton = document.getElementById('global-submit-profile');
+        const changeInfoParagraph = document.getElementById('change-info');
+        let profileHasUnsubmittedChanges = false;
+
+        // Tab Switching Logic
+        function setActiveTab(tabId) {
+             tabButtons.forEach(button => {
+                const buttonTab = button.getAttribute('data-tab');
+                const isActive = buttonTab === tabId;
+                button.classList.toggle('active', isActive);
+                 // Adjust classes based on active state (simplified from previous)
+                if(isActive){
+                    button.classList.add('border-blue-500', 'text-blue-600', 'dark:border-blue-400', 'dark:text-blue-400');
+                    button.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300', 'dark:text-gray-400', 'dark:hover:text-gray-300', 'dark:hover:border-gray-600');
+                } else {
+                    button.classList.remove('border-blue-500', 'text-blue-600', 'dark:border-blue-400', 'dark:text-blue-400');
+                    button.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300', 'dark:text-gray-400', 'dark:hover:text-gray-300', 'dark:hover:border-gray-600');
+                }
+             });
+             tabPanes.forEach(pane => {
+                pane.classList.toggle('active', pane.id === tabId);
+                pane.classList.toggle('hidden', pane.id !== tabId); // Ensure only active is shown
+             });
+        }
+        tabButtons.forEach(button => button.addEventListener('click', (e) => { e.preventDefault(); setActiveTab(button.getAttribute('data-tab')); }));
+        // Set initial active tab
+         const initialTab = document.querySelector('.tab-button.active')?.getAttribute('data-tab') || 'company-details';
+         setActiveTab(initialTab);
+
+        // Global Change Tracking
+        function setChangesMade(hasChanges) {
+             profileHasUnsubmittedChanges = hasChanges;
+             globalSubmitButton.disabled = !hasChanges;
+             changeInfoParagraph.classList.toggle('hidden', !hasChanges);
+        }
+
+        // Per-Form Edit/Confirm/Cancel Logic
+         // (Combined logic for all forms except upload/add-bank which might need special handling)
+         document.querySelectorAll('.tab-pane form').forEach(form => {
+             const editButton = form.querySelector('.btn-edit') || form.parentElement.querySelector('.btn-edit'); // Look for button inside or outside form
+             const actionButtonsDiv = form.querySelector('.edit-actions');
+             const serviceEditForm = form.closest('.tab-pane')?.querySelector('.service-edit-form'); // Specific handling for service edit form visibility
+             const serviceDisplayView = form.closest('.tab-pane')?.querySelector('#service-display-view');
+
+             // Handle forms that might not have edit functionality directly
+             if (!editButton || !actionButtonsDiv) {
+                // console.log("Skipping form, no edit/action buttons found:", form.parentElement.id);
+                 return;
+             }
+
+             const cancelButton = actionButtonsDiv.querySelector('.btn-cancel');
+             const saveLocalButton = actionButtonsDiv.querySelector('.btn-save-local');
+             const formInputs = form.querySelectorAll('input:not([type=file]):not([type=hidden]), textarea, select');
+             let originalValues = {};
+
+             editButton.addEventListener('click', () => {
+                 originalValues = {};
+                 formInputs.forEach(input => {
+                     originalValues[input.name || input.id] = input.type === 'checkbox' ? input.checked : input.value;
+                     input.disabled = false;
+                 });
+                 editButton.classList.add('hidden');
+                 actionButtonsDiv.classList.remove('hidden');
+                 // Special case for services tab
+                 if (serviceEditForm && serviceDisplayView && form.classList.contains('service-edit-form')) {
+                     serviceDisplayView.classList.add('hidden');
+                     serviceEditForm.classList.remove('hidden');
+                 } else if (serviceEditForm && serviceDisplayView) {
+                      // If editing other forms, ensure service form is hidden/display shown
+                     serviceDisplayView.classList.remove('hidden');
+                     serviceEditForm.classList.add('hidden');
+                 }
+             });
+
+             cancelButton.addEventListener('click', () => {
+                 formInputs.forEach(input => {
+                     const originalValue = originalValues[input.name || input.id];
+                     if (originalValue !== undefined) { input.type === 'checkbox' ? input.checked = originalValue : input.value = originalValue; }
+                     input.disabled = true;
+                 });
+                 editButton.classList.remove('hidden');
+                 actionButtonsDiv.classList.add('hidden');
+                  // Special case for services tab
+                 if (serviceEditForm && serviceDisplayView) {
+                     serviceDisplayView.classList.remove('hidden');
+                     serviceEditForm.classList.add('hidden');
+                 }
+             });
+
+             saveLocalButton.addEventListener('click', () => {
+                 let changed = false;
+                 formInputs.forEach(input => {
+                      if (originalValues[input.name || input.id] !== (input.type === 'checkbox' ? input.checked : input.value)) { changed = true; }
+                     input.disabled = true;
+                 });
+                 editButton.classList.remove('hidden');
+                 actionButtonsDiv.classList.add('hidden');
+                 if (changed) { setChangesMade(true); console.log("Local changes confirmed for form"); }
+                  // Special case for services tab
+                 if (serviceEditForm && serviceDisplayView) {
+                     serviceDisplayView.classList.remove('hidden'); // Show the display view
+                     serviceEditForm.classList.add('hidden'); // Hide the edit form
+                 }
+             });
+         });
+
+
+        // Upload Document Form Toggle & Staging
+        const uploadDocButton = document.querySelector('.btn-upload-doc');
+        const uploadDocForm = document.querySelector('.upload-doc-form');
+        const cancelUploadButton = uploadDocForm?.querySelector('.btn-cancel-upload');
+        if(uploadDocButton && uploadDocForm && cancelUploadButton) {
+             uploadDocButton.addEventListener('click', () => uploadDocForm.classList.remove('hidden'));
+             cancelUploadButton.addEventListener('click', () => { uploadDocForm.classList.add('hidden'); uploadDocForm.reset(); });
+             uploadDocForm.addEventListener('submit', (e) => { e.preventDefault(); console.log("Staging Document Upload"); setChangesMade(true); uploadDocForm.classList.add('hidden'); uploadDocForm.reset(); });
+         }
+
+        // User Management - Invite User Form Toggle
+        const inviteUserButton = document.getElementById('inviteUserButton');
+        const inviteUserForm = document.getElementById('inviteUserForm');
+        const cancelInviteButton = document.getElementById('cancelInviteButton');
+        
+        if(inviteUserButton && inviteUserForm && cancelInviteButton) {
+            inviteUserButton.addEventListener('click', () => {
+                inviteUserForm.classList.remove('hidden');
+            });
+            
+            cancelInviteButton.addEventListener('click', () => {
+                inviteUserForm.classList.add('hidden');
+                // Reset form fields if needed
+                const formInputs = inviteUserForm.querySelectorAll('input, select');
+                formInputs.forEach(input => {
+                    if (input.type === 'checkbox') {
+                        input.checked = false;
+                    } else {
+                        input.value = '';
+                    }
+                });
+            });
+            
+            // Handle form submission
+            inviteUserForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const firstName = document.getElementById('invite-fname').value;
+                const lastName = document.getElementById('invite-lname').value;
+                const email = document.getElementById('invite-email').value;
+                const role = document.getElementById('invite-role').value;
+                
+                if(firstName && lastName && email && role) {
+                    alert(`Invitation would be sent to ${firstName} ${lastName} (${email}) with role: ${role}`);
+                    inviteUserForm.classList.add('hidden');
+                    // Reset form
+                    const formInputs = inviteUserForm.querySelectorAll('input, select');
+                    formInputs.forEach(input => {
+                        if (input.type === 'checkbox') {
+                            input.checked = false;
+                        } else {
+                            input.value = '';
+                        }
+                    });
+                } else {
+                    alert('Please fill in all required fields');
+                }
+            });
+        }
+
+        // User Action Functions (stubs)
+        window.showEditRoleModal = function(userName) {
+            alert('Edit roles for: ' + userName + '\n\nThis would open a modal to edit user roles.');
+        };
+        
+        window.showDeactivateModal = function(userName) {
+            if (confirm('Are you sure you want to deactivate user: ' + userName + '?\n\nThis action will revoke their access to the portal.')) {
+                alert('User ' + userName + ' would be deactivated.');
+            }
+        };
+        
+        window.resendInvitation = function(email) {
+            alert('Invitation resent to: ' + email);
+        };
+        
+        window.cancelInvitation = function(email) {
+            if (confirm('Are you sure you want to cancel the invitation to: ' + email + '?')) {
+                alert('Invitation to ' + email + ' would be cancelled.');
+            }
+        };
+        
+        window.reactivateUser = function(userName) {
+            if (confirm('Are you sure you want to reactivate user: ' + userName + '?')) {
+                alert('User ' + userName + ' would be reactivated.');
+            }
+        };
+
+        // Global Submit Button Logic
+         if (globalSubmitButton) {
+            globalSubmitButton.addEventListener('click', () => {
+                 if (!profileHasUnsubmittedChanges) return;
+                 console.log("Collecting all staged profile updates...");
+                 alert("Submitting updates for approval (implement backend call here).");
+                 globalSubmitButton.disabled = true;
+                 globalSubmitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...'; // Add loading state
+                 setTimeout(() => { // Simulate API call
+                    console.log("Submission processed (simulated).");
+                    setChangesMade(false); // Reset changes flag
+                    globalSubmitButton.innerHTML = '<i class="fas fa-cloud-upload-alt mr-2"></i> Submit Profile Updates for Approval';
+                    alert("Profile updates submitted successfully for approval!");
+                 }, 1500);
+            });
+        }
+
+        // Sidebar Toggle Logic (From landing page)
+        const toggleSidebarButton = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        if (toggleSidebarButton && sidebar) {
+          toggleSidebarButton.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+          });
+        }
+
+        // Dark Mode Toggle (From landing page)
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        const moonIcon = '<i class="fas fa-moon text-xl"></i>';
+        const sunIcon = '<i class="fas fa-sun text-xl"></i>';
+
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                body.classList.add('dark');
+                darkModeToggle.innerHTML = sunIcon;
+            } else {
+                body.classList.remove('dark');
+                darkModeToggle.innerHTML = moonIcon;
+            }
+        };
+
+        if (darkModeToggle) {
+          darkModeToggle.addEventListener('click', () => {
+            const newTheme = body.classList.contains('dark') ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+          });
+
+          // Apply saved theme on load
+          const savedTheme = localStorage.getItem('theme') || 'light'; // Default to light
+          applyTheme(savedTheme);
+        }
+
+        // Chat Modal Logic (From landing page)
+        const openChatModalButton = document.getElementById('openChatModalButton');
+        const chatModalOverlay = document.getElementById('chatModalOverlay');
+        const closeChatModalButton = document.getElementById('closeChatModalButton');
+        const chatSendButton = document.getElementById('chatSendButton');
+        const chatInput = document.getElementById('chatInput');
+        const chatBody = document.getElementById('chatBody');
+
+        if (openChatModalButton && chatModalOverlay) {
+          openChatModalButton.addEventListener('click', () => {
+              chatModalOverlay.classList.add('open');
+              chatInput.focus(); // Focus input when modal opens
+          });
+
+          const closeChatModal = () => {
+              chatModalOverlay.classList.remove('open');
+          }
+
+          closeChatModalButton.addEventListener('click', closeChatModal);
+
+          // Close modal if clicked outside the chat window
+          chatModalOverlay.addEventListener('click', (event) => {
+              if (event.target === chatModalOverlay) {
+                  closeChatModal();
+              }
+          });
+
+          function addChatMessage(message, type) {
+              const messageElement = document.createElement('div');
+              messageElement.classList.add('chat-message', type);
+              messageElement.textContent = message;
+              chatBody.appendChild(messageElement);
+              // Scroll to the bottom of the chat body smoothly
+              chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: 'smooth' });
+          }
+
+          chatSendButton.addEventListener('click', () => {
+              const message = chatInput.value.trim();
+              if (message) {
+                  addChatMessage(message, 'sent');
+                  chatInput.value = '';
+                  // Simulate AI response
+                  setTimeout(() => {
+                      addChatMessage("I'm looking into that for you...", 'received');
+                  }, 1000);
+              }
+          });
+
+          chatInput.addEventListener('keypress', (e) => {
+              if (e.key === 'Enter' && !e.shiftKey) { // Send on Enter, allow Shift+Enter for newline
+                  e.preventDefault(); // Prevent default Enter behavior (newline)
+                  chatSendButton.click();
+              }
+          });
+        }
+
+        // Initial Setup
+        setChangesMade(false); // Ensure submit is disabled initially
+   });
+  </script> Staging ---
+        const uploadDocButton = document.querySelector('.btn-upload-doc');
+        const uploadDocForm = document.querySelector('.upload-doc-form');
+        const cancelUploadButton = uploadDocForm?.querySelector('.btn-cancel-upload');
+        if(uploadDocButton && uploadDocForm && cancelUploadButton) {
+             uploadDocButton.addEventListener('click', () => uploadDocForm.classList.remove('hidden'));
+             cancelUploadButton.addEventListener('click', () => { uploadDocForm.classList.add('hidden'); uploadDocForm.reset(); });
+             uploadDocForm.addEventListener('submit', (e) => { /* ... Stage document, setChangesMade(true) ... */ e.preventDefault(); console.log("Staging Document Upload"); setChangesMade(true); uploadDocForm.classList.add('hidden'); uploadDocForm.reset(); });
+         }
+
+         // --- Global Submit Button Logic ---
+         if (globalSubmitButton) {
+            globalSubmitButton.addEventListener('click', () => {
+                 if (!profileHasUnsubmittedChanges) return;
+                 console.log("Collecting all staged profile updates...");
+                 alert("Submitting updates for approval (implement backend call here).");
+                 globalSubmitButton.disabled = true;
+                 globalSubmitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...'; // Add loading state
+                 setTimeout(() => { // Simulate API call
+                    console.log("Submission processed (simulated).");
+                    setChangesMade(false); // Reset changes flag
+                    globalSubmitButton.innerHTML = '<i class="fas fa-cloud-upload-alt mr-2"></i> Submit Profile Updates for Approval';
+                    alert("Profile updates submitted successfully for approval!");
+                 }, 1500);
+            });
+        }
+
+        // --- Sidebar Toggle Logic (From landing page) ---
+        const toggleSidebarButton = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        if (toggleSidebarButton && sidebar) {
+          toggleSidebarButton.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+          });
+        }
+
+        // --- Dark Mode Toggle (From landing page) ---
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        const moonIcon = '<i class="fas fa-moon text-xl"></i>';
+        const sunIcon = '<i class="fas fa-sun text-xl"></i>';
+
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                body.classList.add('dark');
+                darkModeToggle.innerHTML = sunIcon;
+            } else {
+                body.classList.remove('dark');
+                darkModeToggle.innerHTML = moonIcon;
+            }
+        };
+
+        if (darkModeToggle) {
+          darkModeToggle.addEventListener('click', () => {
+            const newTheme = body.classList.contains('dark') ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+          });
+
+          // Apply saved theme on load
+          const savedTheme = localStorage.getItem('theme') || 'light'; // Default to light
+          applyTheme(savedTheme);
+        }
+
+        // --- Chat Modal Logic (From landing page) ---
+        const openChatModalButton = document.getElementById('openChatModalButton');
+        const chatModalOverlay = document.getElementById('chatModalOverlay');
+        const closeChatModalButton = document.getElementById('closeChatModalButton');
+        const chatSendButton = document.getElementById('chatSendButton');
+        const chatInput = document.getElementById('chatInput');
+        const chatBody = document.getElementById('chatBody');
+
+        if (openChatModalButton && chatModalOverlay) {
+          openChatModalButton.addEventListener('click', () => {
+              chatModalOverlay.classList.add('open');
+              chatInput.focus(); // Focus input when modal opens
+          });
+
+          const closeChatModal = () => {
+              chatModalOverlay.classList.remove('open');
+          }
+
+          closeChatModalButton.addEventListener('click', closeChatModal);
+
+          // Close modal if clicked outside the chat window
+          chatModalOverlay.addEventListener('click', (event) => {
+              if (event.target === chatModalOverlay) {
+                  closeChatModal();
+              }
+          });
+
+          function addChatMessage(message, type) {
+              const messageElement = document.createElement('div');
+              messageElement.classList.add('chat-message', type);
+              messageElement.textContent = message;
+              chatBody.appendChild(messageElement);
+              // Scroll to the bottom of the chat body smoothly
+              chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: 'smooth' });
+          }
+
+          chatSendButton.addEventListener('click', () => {
+              const message = chatInput.value.trim();
+              if (message) {
+                  addChatMessage(message, 'sent');
+                  chatInput.value = '';
+                  // Simulate AI response
+                  setTimeout(() => {
+                      addChatMessage("I'm looking into that for you...", 'received');
+                  }, 1000);
+              }
+          });
+
+          chatInput.addEventListener('keypress', (e) => {
+              if (e.key === 'Enter' && !e.shiftKey) { // Send on Enter, allow Shift+Enter for newline
+                  e.preventDefault(); // Prevent default Enter behavior (newline)
+                  chatSendButton.click();
+              }
+          });
+        }
+
+        // --- Initial Setup ---
+        setChangesMade(false); // Ensure submit is disabled initially
+   });
+  </script>
+</body>
+</html>-blue-500"><i class="fas fa-upload mr-2"></i>Upload New Document</button></div>
+                     {/* ... Upload form (hidden initially) ... */}
+                     <div class="mb-6"><h4 class="text-md font-semibold text-gray-700 dark:text-gray-300 mb-3 border-b border-gray-200 dark:border-gray-700 pb-1">Company Documents</h4><div class="space-y-3" id="doc-list-company">
+                         {/* Trade License */}
+                         <div class="flex flex-wrap items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-md"><div class="flex items-center flex-grow mr-4"><i class="fas fa-id-badge text-green-600 dark:text-green-400 mr-3 text-lg"></i><div class="flex-grow"><p class="font-medium text-gray-900 dark:text-gray-100 required-asterisk">Trade License</p><a href="#" target="_blank" class="text-xs text-blue-600 hover:underline dark:text-blue-400 mr-2 break-all">ACME_TradeLicense.pdf</a><p class="text-xs text-green-700 dark:text-green-300">Status: Approved - Expires: Dec 31, 2026</p></div></div><button type="button" class="text-sm text-blue-600 hover:underline dark:text-blue-400 mt-2 sm:mt-0 ml-auto whitespace-nowrap">Upload Renewal</button></div>
+                         {/* Tax Certificate */}
+                         <div class="flex flex-wrap items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-md"><div class="flex items-center flex-grow mr-4"><i class="fas fa-file-invoice-dollar text-green-600 dark:text-green-400 mr-3 text-lg"></i><div class="flex-grow"><p class="font-medium text-gray-900 dark:text-gray-100 required-asterisk">Tax Registration Certificate (TRN)</p><a href="#" target="_blank" class="text-xs text-blue-600 hover:underline dark:text-blue-400 mr-2 break-all">ACME_TRN_Cert.pdf</a><p class="text-xs text-green-700 dark:text-green-300">Status: Approved</p></div></div><button type="button" class="text-sm text-blue-600 hover:underline dark:text-blue-400 mt-2 sm:mt-0 ml-auto whitespace-nowrap">Upload New</button></div>
+                     </div></div>
+                     {/* ... Sections for Agreements (NDA/Contracts) ... */}
+                      <div class="mb-6"><h4 class="text-md font-semibold text-gray-700 dark:text-gray-300 mb-3 border-b border-gray-200 dark:border-gray-700 pb-1">Agreements</h4><div class="space-y-3" id="doc-list-agreements">
+                         {/* NDA Example */}
+                         <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-md"><div class="flex flex-wrap justify-between items-center"><div class="flex items-center mr-4"><i class="fas fa-file-signature text-gray-600 dark:text-gray-400 text-xl mr-3"></i><div><p class="font-medium text-gray-900 dark:text-gray-100">Master Services NDA</p><p class="text-sm text-gray-500 dark:text-gray-400">Type: AdHoc | Agreed: Jan 05, 2024</p></div></div><div class="mt-2 sm:mt-0 text-right"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">Active</span><a href="#" target="_blank" class="ml-4 text-sm text-blue-600 hover:underline dark:text-blue-400">View Document</a></div></div></div>
+                         {/* Contract Example */}
+                          <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-md"><div class="flex flex-wrap justify-between items-center"><div class="flex items-center mr-4"><i class="fas fa-file-contract text-gray-600 dark:text-gray-400 text-xl mr-3"></i><div><p class="font-medium text-gray-900 dark:text-gray-100">Project Alpha SOW (CON-2025-001)</p><p class="text-sm text-gray-500 dark:text-gray-400">Start: Apr 01, 2025 | End: Sep 30, 2025</p></div></div><div class="mt-2 sm:mt-0 text-right"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">Active</span><a href="#" target="_blank" class="ml-4 text-sm text-blue-600 hover:underline dark:text-blue-400">View Details</a></div></div></div>
+                      </div></div>
+                     {/* ... Section for Other Documents ... */}
+                     {/* ... Section for Document History ... */}
+                 </div>
+            </div>
+
+             {/* --- User Management Tab (NEW/ENHANCED) --- */}
+            <div id="user-management" class="tab-pane">
+                 {/* Insert User Management content here (from previous response) */}
+                 <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 transition-colors">
+                     <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Manage Portal Users</h2>
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md flex items-center text-sm">
+                            <i class="fas fa-plus mr-2"></i> Invite New User
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                             <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Role(s)</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                             <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800/50 dark:divide-gray-700">
+                                {/* Example User Row 1 (Primary Admin) */}
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                                        Admin User (You) <span class="text-xs text-gray-500 dark:text-gray-400">(Primary)</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        admin@acme-corp.ae
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        Administrator, Finance
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        <span class="status-badge status-active">Active</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                         <button class="action-button" title="Edit Roles (Requires another Admin)" disabled><i class="fas fa-user-edit opacity-50"></i></button>
+                                         <button class="action-button" title="Cannot deactivate primary admin" disabled><i class="fas fa-user-slash opacity-50"></i></button>
+                                    </td>
+                                </tr>
+                                {/* Example User Row 2 (Active User) */}
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                                        Finance User One
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        finance1@acme-corp.ae
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        Finance
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                         <span class="status-badge status-active">Active</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="action-button" title="Edit Roles" onclick="alert('Edit Roles for Finance User One')"><i class="fas fa-user-edit"></i></button>
+                                        <button class="action-button danger" title="Deactivate User" onclick="alert('Deactivate Finance User One')"><i class="fas fa-user-slash"></i></button>
+                                    </td>
+                                </tr>
+                                {/* Example User Row 3 (Pending Invitation) */}
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                                        (Pending Invitation)
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        delivery.contact@acme-corp.ae
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        Delivery Contact
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                         <span class="status-badge status-pending">Pending</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="action-button" title="Resend Invitation" onclick="alert('Resend invitation')"><i class="fas fa-envelope"></i></button>
+                                        <button class="action-button danger" title="Cancel Invitation" onclick="alert('Cancel invitation')"><i class="fas fa-trash-alt"></i></button>
+                                    </td>
+                                </tr>
+                             </tbody>
+                        </table>
+                    </div>
+                 </div>
+            </div>
+
+        </div>
+        {/* --- TAB CONTENT END --- */}
+
+         {/* --- Global Submit Button --- */}
+        <div class="mt-8 py-4 bg-gray-100 dark:bg-gray-900 sticky bottom-0 border-t border-gray-200 dark:border-gray-700 z-10">
+            <div class="max-w-7xl mx-auto flex justify-end px-4 sm:px-6 lg:px-8">
+                 <button type="button" id="global-submit-profile" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring for="comp-website" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Company Website</label><input type="url" id="comp-website" name="Website" value="https://acme-corp.ae" class="form-input mt-1 block w-full" disabled></div>
+                        <div class="md:col-span-2"><label

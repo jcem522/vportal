@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Portal - Knowledge Base</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Base styles */
+        body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; }
+        .dark body { background-color: #111827; }
+        .dark .bg-white { background-color: #1f2937; }
+        .dark .bg-gray-50 { background-color: #111827; }
+        .dark .text-gray-900 { color: #f9fafb; }
+        .dark .text-gray-800 { color: #f3f4f6; }
+        .dark .text-gray-700 { color: #e5e7eb; }
+        .dark .text-gray-600 { color: #d1d5db; }
+        .dark .text-gray-500 { color: #9ca3af; }
+        .dark .border-gray-200 { border-color: #374151; }
+        .dark .border-gray-300 { border-color: #4b5563; }
+        
+        /* Search styling */
+        .search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #9ca3af; }
+        .search-input { padding-left: 2.5rem; }
+        
+        /* Category links */
+        .category-link { display: block; padding: 0.5rem 0.75rem; border-radius: 0.375rem; transition: background-color 0.2s ease; color: #4b5563;}
+        .dark .category-link { color: #d1d5db; }
+        .category-link:hover { background-color: #e5e7eb; }
+        .dark .category-link:hover { background-color: #374151; }
+        .category-link.active { background-color: #dbeafe; color: #1e40af; font-weight: 500; }
+        .dark .category-link.active { background-color: #1e3a8a; color: #bfdbfe; }
+        
+        /* Article cards */
+        .article-card { transition: box-shadow 0.2s ease, border-color 0.2s ease; border: 1px solid #e5e7eb;}
+        .dark .article-card { border-color: #374151; }
+        .article-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-color: #d1d5db; }
+        .dark .article-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.3); border-color: #4b5563; }
+        
+        /* Video thumbnails */
+        .video-thumbnail { position: relative; overflow: hidden; border-radius: 0.375rem; }
+        .video-thumbnail img { transition: transform 0.3s ease; }
+        .video-thumbnail:hover img { transform: scale(1.05); }
+        .video-duration { position: absolute; bottom: 0.5rem; right: 0.5rem; background-color: rgba(0,0,0,0.75); color: white; padding: 0.125rem 0.375rem; border-radius: 0.25rem; font-size: 0.75rem; }
+        .play-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 2.5rem; opacity: 0.9; transition: opacity 0.2s; }
+        .video-thumbnail:hover .play-icon { opacity: 1; }
+        
+        /* Tab buttons */
+        .tab-button { transition: all 0.2s ease; }
+        .tab-button.active { border-bottom-width: 2px; border-color: #3b82f6; color: #1e40af; }
+        .dark .tab-button.active { border-color: #3b82f6; color: #93c5fd; }
+        
+        /* Category badges */
+        .category-badge { display: inline-block; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; background-color: #f3f4f6; color: #4b5563; }
+        .dark .category-badge { background-color: #374151; color: #d1d5db; }
+        .featured-badge { background-color: #fef3c7; color: #92400e; }
+        .dark .featured-badge { background-color: #78350f; color: #fcd34d; }
+        .new-badge { background-color: #dcfce7; color: #166534; }
+        .dark .new-badge { background-color: #14532d; color: #86efac; }
+        
+        /* Theme toggle switch */
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 30px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #3b82f6;
+        }
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white dark:bg-gray-800 shadow hidden md:block flex-shrink-0">
+            <div class="p-4">
+                <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200">Vendor Portal</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Support Center</p>
+            </div>
+            
+            <nav class="mt-6">
+                <div class="px-4 mb-3">
+                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Navigation
+                    </p>
+                </div>
+                <a href="./support-center.html" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <span>Support Home</span>
+                </a>
+                <a href="./faq.html" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <span>FAQs</span>
+                </a>
+                <a href="./knowledge-base.html" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 bg-blue-50 dark:bg-blue-900 border-r-4 border-blue-500">
+                    <span>Knowledge Base</span>
+                </a>
+                <a href="./submit-ticket.html" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <span>Raise Ticket</span>
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <span>My Tickets</span>
+                </a>
+
+                <div class="px-4 mt-6 mb-3">
+                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Account
+                    </p>
+                </div>
+                <a href="#" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="h-16 bg-white dark:bg-gray-800 shadow z-10 flex justify-between items-center px-6">
+                <div class="flex items-center">
+                    <button class="text-gray-500 focus:outline-none md:hidden">
+                    </button>
+                    <h1 class="ml-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Knowledge Base</h1>
+                </div>
+                <div class="flex items-center">
+                    <div class="relative mr-4">
+                        <input type="text" class="w-full py-2 pl-4 pr-4 text-gray-700 bg-gray-100 border border-transparent rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 dark:focus:border-blue-400" placeholder="Quick search...">
+                    </div>
+                    <div class="flex items-center">
+                        <label class="theme-switch mr-4" for="themeToggle">
+                            <input type="checkbox" id="themeToggle">
+                            <span class="slider"></span>
+                        </label>
+                        <div class="relative">
+                            <button class="flex items-center focus:outline-none">
+                                <div class="w-8 h-8 overflow-hidden rounded-full border-2 border-gray-300 dark:border-gray-700">
+                                </div>
+                                <span class="mx-2 font-medium text-gray-700 dark:text-gray-300">Khaled Essam</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900 p-6 md:p-8 lg:p-10">
+                <div class="max-w-6xl mx-auto">
+
+                    <!-- Breadcrumb -->
+                    <nav class="text-sm mb-4" aria-label="Breadcrumb">
+                        <ol class="list-none p-0 inline-flex items-center">
+                            <li class="flex items-center">
+                                <a href="./support-center.html" class="text-blue-600 dark:text-blue-400 hover:underline">Support Center</a>
+                                <span class="mx-2 text-gray-400">/</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-gray-500 dark:text-gray-400">Knowledge Base</span>
+                            </li>
+                        </ol>
+                    </nav>
+
+                    <!-- Page Header & Search -->
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Knowledge Base</h1>
+                        <p class="text-md text-gray-600 dark:text-gray-400 mb-4">Browse guides, tutorials, videos, and policies.</p>
+                        <div class="relative">
+                            <span class="search-icon"></span>
+                            <input type="search" placeholder="Search Knowledge Base..." class="search-input w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100">
+                        </div>
+                    </div>
+
+                    <!-- Featured Content Section -->
+                    <div class="mb-8">
+                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Featured Resources</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <!-- Featured Video Card -->
+                            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+                                <div class="video-thumbnail aspect-w-16 aspect-h-9">
+                                    <img src="/api/placeholder/640/360" alt="Quick Start Guide" class="object-cover w-full h-48" />
+                                    <span class="video-duration">5:32</span>
+                                </div>
+                                <div class="p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="category-badge featured-badge">Featured</span>
+                                        <span class="text-xs text-gray-500">Mar 22, 2025</span>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-blue-700 dark:text-blue-400 mb-1">Quick Start Guide to the Vendor Portal</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">An overview of the portal features and how to get started as a new vendor.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Featured Article Card -->
+                            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+                                <div class="p-4 border-l-4 border-blue-500 h-full flex flex-col">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="category-badge new-badge">New</span>
+                                        <span class="text-xs text-gray-500">Apr 2, 2025</span>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-blue-700 dark:text-blue-400 mb-2">2025 Invoice Submission Guidelines</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">Updated requirements and best practices for invoice submissions in the new fiscal year.</p>
+                                    <a href="#" class="text-blue-600 dark:text-blue-400 text-sm hover:underline flex items-center">
+                                        Read full article
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Featured Video Webinar -->
+                            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+                                <div class="video-thumbnail aspect-w-16 aspect-h-9">
+                                    <img src="/api/placeholder/640/360" alt="Webinar: Advanced Invoicing" class="object-cover w-full h-48" />
+                                    <span class="video-duration">32:14</span>
+                                </div>
+                                <div class="p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="category-badge featured-badge">Webinar</span>
+                                        <span class="text-xs text-gray-500">Mar 15, 2025</span>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-blue-700 dark:text-blue-400 mb-1">Advanced Invoicing Techniques</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Learn how to handle complex invoicing scenarios and avoid common pitfalls.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Tabs -->
+                    <div class="mb-6 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex overflow-x-auto">
+                            <button class="tab-button active py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300">All Resources</button>
+                            <button class="tab-button py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Articles</button>
+                            <button class="tab-button py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Video Tutorials</button>
+                            <button class="tab-button py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Webinars</button>
+                            <button class="tab-button py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Policies</button>
+                        </div>
+                    </div>
+
+                    <!-- Layout with Categories Sidebar and Content List -->
+                    <div class="flex flex-col md:flex-row gap-8">
+
+                        <!-- Categories Sidebar -->
+                        <aside class="w-full md:w-1/4 lg:w-1/5 flex-shrink-0">
+                            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Categories</h2>
+                            <nav class="space-y-1">
+                                <a href="#" class="category-link active">All Categories</a>
+                                <a href="#" class="category-link">Getting Started <span class="float-right text-xs text-gray-500">(4)</span></a>
+                                <a href="#" class="category-link">Profile Management <span class="float-right text-xs text-gray-500">(3)</span></a>
+                                <a href="#" class="category-link">Purchase Orders <span class="float-right text-xs text-gray-500">(5)</span></a>
+                                <a href="#" class="category-link">Invoicing Guide <span class="float-right text-xs text-gray-500">(7)</span></a>
+                                <a href="#" class="category-link">Payments <span class="float-right text-xs text-gray-500">(4)</span></a>
+                                <a href="#" class="category-link">Policies & Compliance <span class="float-right text-xs text-gray-500">(6)</span></a>
+                                <a href="#" class="category-link">Troubleshooting <span class="float-right text-xs text-gray-500">(3)</span></a>
+                            </nav>
+                            
+                            <!-- Content Type Filters -->
+                            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3 mt-6">Content Type</h2>
+                            <div class="space-y-2">
+                                <label class="flex items-center text-gray-700 dark:text-gray-300">
+                                    <input type="checkbox" checked class="h-4 w-4 text-blue-600 rounded">
+                                    <span class="ml-2">Articles</span>
+                                </label>
+                                <label class="flex items-center text-gray-700 dark:text-gray-300">
+                                    <input type="checkbox" checked class="h-4 w-4 text-blue-600 rounded">
+                                    <span class="ml-2">Videos</span>
+                                </label>
+                                <label class="flex items-center text-gray-700 dark:text-gray-300">
+                                    <input type="checkbox" checked class="h-4 w-4 text-blue-600 rounded">
+                                    <span class="ml-2">Webinars</span>
+                                </label>
+                                <label class="flex items-center text-gray-700 dark:text-gray-300">
+                                    <input type="checkbox" checked class="h-4 w-4 text-blue-600 rounded">
+                                    <span class="ml-2">Guides</span>
+                                </label>
+                            </div>
+                        </aside>
+
+                        <!-- Content Section -->
+                        <section class="flex-1">
+                            <!-- Display category title or "All Resources" -->
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">All Resources <span class="text-base font-normal text-gray-500 dark:text-gray-400">(25 results)</span></h2>
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-500 dark:text-gray-400 mr-2">Sort by:</span>
+                                    <select class="text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded py-1 px-2">
+                                        <option>Most Recent</option>
+                                        <option>Most Viewed</option>
+                                        <option>Alphabetical</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Content Grid - Mixed Articles and Videos -->
+                            <div class="space-y-4">
+                                <!-- Video Tutorial Card -->
+                                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm article-card overflow-hidden">
+                                    <div class="flex flex-col md:flex-row">
+                                        <div class="md:w-1/3 relative">
+                                            <div class="video-thumbnail h-full">
+                                                <img src="/api/placeholder/400/300" alt="Invoice Tutorial" class="object-cover w-full h-full" />
+                                                <span class="video-duration">7:42</span>
+                                            </div>
+                                        </div>
+                                        <div class="p-5 md:w-2/3">
+                                            <div class="flex items-center mb-2">
+                                                <span class="category-badge mr-2">Invoicing Guide</span>
+                                                <span class="text-xs text-gray-500">Video Tutorial</span>
+                                            </div>
+                                            <h3 class="text-lg font-semibold text-blue-700 dark:text-blue-400 mb-1">How to Submit Your First Invoice</h3>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Watch this step-by-step video guide on how to create and submit an invoice through the portal against a Purchase Order.</p>
+                                            <div class="flex items-center text-sm text-gray-500 dark:text-gray-500">
+                                                <span>7:42</span>
+                                                <span class="mx-3">|</span>
+                                                <span>Mar 20, 2025</span>
+                                                <span class="mx-3">|</span>
+                                                <span>2,345 views</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Article Card -->
+                                <a href="#article-detail-url-1" class="block p-5 bg-white dark:bg-gray-800 rounded-lg shadow-sm article-card">
+                                    <div class="flex items-center mb-2">
+                                        <span class="category-badge mr-2">Purchase Orders</span>
+                                        <span class="text-xs text-gray-500">Article</span>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-blue-700 dark:text-blue-400 mb-1">Understanding PO Acknowledgement</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">Learn why acknowledging Purchase Orders is important and how to complete the acknowledgement process within the portal interface.</p>
+                                    <span class="text-xs text-gray-500 dark:text-gray-500">Feb 28, 2025</span>
+                                </a>
+                                
+                                <!-- Video Tutorial Card 2 -->
+                                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm article-card overflow-hidden">
+                                    <div class="flex flex-col md:flex-row">
+                                        <div class="md:w-1/3 relative">
+                                            <div class="video-thumbnail h-full">
+                                                <img src="/api/placeholder/400/300" alt="Portal Navigation" class="object-cover w-full h-full" />
+                                                <span class="video-duration">4:18</span>
+                                            </div>
+                                        </div>
+                                        <div class="p-5 md:w-2/3">
+                                            <div class="flex items-center mb-2">
+                                                <span class="category-badge mr-2">Getting Started</span>
+                                                <span class="text-xs text-gray-500">Video Tutorial</span>
+                                            </div>
+                                            <h3 class="text-lg font-semibold text-blue-700 dark:text-blue-400 mb-1">Portal Navigation Essentials</h3>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">A quick tour of the vendor portal interface, showing you how to find key features and navigate efficiently.</p>
+                                            <div class="flex items-center text-sm text-gray-500 dark:text-gray-500">
+                                                <span>4:18</span>
+                                                <span class="mx-3">|</span>
+                                                <span>Mar 10, 2025</span>
+                                                <span class="mx-3">|</span>
+                                                <span>1,892 views</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Article Card 2 -->
+                                <a href="#article-detail-url-3" class="block p-5 bg-white dark:bg-gray-800 rounded-lg shadow-sm article-card">
+                                    <div class="flex items-center mb-2">
+                                        <span class="category-badge mr-2">Policies & Compliance</span>
+                                        <span class="text-xs text-gray-500">Article</span>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-blue-700 dark:text-blue-400 mb-1">Data Privacy and Security Policy</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">Review our policies regarding the handling and security of your company and personal data within the vendor portal.</p>
+                                    <span class="text-xs text-gray-500 dark:text-gray-500">Mar 01, 2025</span>
+                                </a>
+                                
+                                <!-- Webinar Card -->
+                                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm article-card overflow-hidden">
+                                    <div class="flex flex-col md:flex-row">
+                                        <div class="md:w-1/3 relative">
+                                            <div class="video-thumbnail h-full">
+                                                <img src="/api/placeholder/400/300" alt="Payment Processing Webinar" class="object-cover w-full h-full" />
+                                                <span class="video-duration">45:22</span>
+                                            </div>
+                                        </div>
+                                        <div class="p-5 md:w-2/3">
+                                            <div class="flex items-center mb-2">
+                                                <span class="category-badge mr-2">Payments</span>
+                                                <span class="category-badge featured-badge mr-2">Webinar</span>
+                                            </div>
+                                            <h3 class="text-lg font-semibold text-blue-700 dark:text-blue-400 mb-1">Payment Processing and Best Practices</h3>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">A detailed webinar covering payment terms, methods, common issues, and how to resolve payment discrepancies.</p>
+                                            <div class="flex items-center text-sm text-gray-500 dark:text-gray-500">
+                                                <span>45:22</span>
+                                                <span class="mx-3">|</span>
+                                                <span>Feb 15, 2025</span>
+                                                <span class="mx-3">|</span>
+                                                <span>1,256 views</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Load More Button -->
+                            <div class="mt-8 text-center">
+                                <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors duration-200 flex items-center mx-auto">
+                                    Load More
+                                </button>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Floating Chat Button -->
+    <button id="chatButton" class="chat-widget-button bg-blue-600 hover:bg-blue-700 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg relative">
+        <span class="chat-notification">2</span>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button
